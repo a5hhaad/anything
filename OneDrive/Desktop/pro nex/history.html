@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Change History</title>    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #1a1a1a;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --light-bg: #0a0a0a;
+            --dark-bg: #000000;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+            z-index: -1;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }        .container {
+            margin: 2rem;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }        .header {
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }        .back-button {
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--border-color);
+        }
+
+        .back-button:hover {
+            transform: translateY(-50%) translateY(-2px);
+            box-shadow: 0 12px 40px rgba(45, 45, 45, 0.3);
+            background: linear-gradient(135deg, #2d2d2d, #404040);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }        .content {
+            padding: 2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            display: none;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .history-table th {
+            background: rgba(255, 255, 255, 0.03);
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .history-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }        .timestamp {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .action {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .action.created {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .action.updated {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+            color: var(--warning-color);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .action.deleted {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .action.status-changed {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+            color: var(--info-color);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9em;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--accent-color), #2563eb);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="container">        <div class="header">
+            <button class="back-button" onclick="goBack()">
+                ←
+            </button>
+            <div class="header-content">
+                <h1>📋 Candidate Change History</h1>
+                <p>Track all changes and updates to candidate records</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="controls" id="controls" style="display: none;">
+                <div class="filter-group">
+                    <label for="actionFilter">Action:</label>
+                    <select id="actionFilter">
+                        <option value="">All Actions</option>
+                        <option value="created">Created</option>
+                        <option value="updated">Updated</option>
+                        <option value="deleted">Deleted</option>
+                        <option value="status-changed">Status Changed</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="dateFilter">Date:</label>
+                    <input type="date" id="dateFilter">
+                </div>
+                
+                <button class="refresh-btn" onclick="loadHistory().catch(console.error)">🔄 Refresh</button>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <div class="icon">📊</div>
+                <h2>No History Records Found</h2>
+                <p>Candidate change history will appear here when candidates are added, updated, or their status changes in the main application.</p>
+            </div>
+
+            <table class="history-table" id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Candidate</th>
+                        <th>Action</th>
+                        <th>Field Changed</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>    <script>
+        // Go back to main dashboard
+        function goBack() {
+            // Try to go back in history first
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // If no history, navigate to candidate management page
+                window.location.href = 'candidate-management.html';
+            }
+        }
+
+        // Load history data on page load        document.addEventListener('DOMContentLoaded', function() {
+            loadHistory();
+        });
+
+        async function loadHistory() {
+            try {
+                // Get history data from API
+                const response = await fetch('/api/history');
+                const historyData = response.ok ? await response.json() : [];
+                
+                const emptyState = document.getElementById('emptyState');
+                const historyTable = document.getElementById('historyTable');
+                const controls = document.getElementById('controls');
+                const tableBody = document.getElementById('historyTableBody');
+                
+                if (historyData.length === 0) {
+                    // Show empty state
+                    emptyState.style.display = 'block';
+                    historyTable.style.display = 'none';
+                    controls.style.display = 'none';
+                } else {
+                    // Show table with data
+                    emptyState.style.display = 'none';
+                    historyTable.style.display = 'table';
+                    controls.style.display = 'flex';
+                    
+                    // Clear existing rows
+                    tableBody.innerHTML = '';
+                    
+                    // Sort by timestamp (newest first)
+                    const sortedHistory = historyData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    
+                    // Apply filters
+                    const actionFilter = document.getElementById('actionFilter').value;
+                    const dateFilter = document.getElementById('dateFilter').value;
+                    
+                    const filteredHistory = sortedHistory.filter(record => {
+                        if (actionFilter && record.action !== actionFilter) return false;
+                        if (dateFilter && !record.timestamp.startsWith(dateFilter)) return false;
+                        return true;
+                    });
+                    
+                    // Populate table - updated to match the new data structure
+                    filteredHistory.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="timestamp">${formatTimestamp(record.timestamp)}</td>
+                            <td><strong>${record.candidate || 'Unknown'}</strong></td>
+                            <td><span class="action ${record.action}">${formatAction(record.action)}</span></td>
+                            <td colspan="3">${record.details || '-'}</td>
+                            <td>${record.user || 'System'}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    
+                    if (filteredHistory.length === 0) {
+                        emptyState.style.display = 'block';
+                        historyTable.style.display = 'none';
+                        document.querySelector('.empty-state h2').textContent = 'No Records Match Filters';
+                        document.querySelector('.empty-state p').textContent = 'Try adjusting your filter criteria to see more results.';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('historyTable').style.display = 'none';
+            }
+        }
+
+        function formatTimestamp(timestamp) {
+            try {
+                const date = new Date(timestamp);
+                return date.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            } catch (error) {
+                return timestamp;
+            }
+        }
+
+        function formatAction(action) {
+            switch (action) {
+                case 'created': return 'Created';
+                case 'updated': return 'Updated';
+                case 'deleted': return 'Deleted';
+                case 'status-changed': return 'Status Changed';
+                default: return action.charAt(0).toUpperCase() + action.slice(1);
+            }
+        }
+
+        // Event listeners for filters
+        document.getElementById('actionFilter').addEventListener('change', loadHistory);
+        document.getElementById('dateFilter').addEventListener('change', loadHistory);
+    </script>
+</body>
+</html>

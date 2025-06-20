@@ -1,0 +1,20 @@
+{
+  "name": "candidate-management-system",
+  "version": "1.0.0",
+  "description": "Candidate Management System with MongoDB backend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "start": "echo 'Static site - no start command needed'"
+  },
+  "dependencies": {
+    "mongodb": "^6.0.0"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "keywords": ["candidate-management", "vercel", "mongodb"],
+  "author": "Your Name",
+  "license": "MIT"
+}

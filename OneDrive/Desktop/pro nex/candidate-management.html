@@ -1,0 +1,4200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protos Nexus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* Global scrollbar hiding */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        /* Hide scrollbars for WebKit browsers (Chrome, Safari, Edge) */
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Ensure html and body also hide scrollbars */
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;        }
+
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d2d2d;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --light-bg: #0a0a0a;
+            --dark-bg: #000000;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #000000;
+            --secondary-color: #1a1a1a;
+            --light-bg: #000000;
+            --dark-bg: #000000;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: #ffffff;
+            --text-secondary: #808080;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+            z-index: -1;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header {
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            margin: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            margin: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: none;
+            border-radius: 15px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            color: white;            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--info-color), #2563eb);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-theme {            background: linear-gradient(135deg, var(--accent-color), #60a5fa);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .table-container {
+            margin: 2rem;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }        .table-wrapper {
+            overflow-x: auto;
+        }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            table-layout: fixed;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }/* Specific column widths */
+        th:nth-child(1), td:nth-child(1) { width: 15%; } /* Candidate */
+        th:nth-child(2), td:nth-child(2) { width: 10%; } /* Work Status */
+        th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Document */
+        th:nth-child(4), td:nth-child(4) { width: 10%; } /* Interview */
+        th:nth-child(5), td:nth-child(5) { width: 12%; } /* Company */
+        th:nth-child(6), td:nth-child(6) { width: 10%; } /* Project */
+        th:nth-child(7), td:nth-child(7) { width: 8%; }  /* Date */
+        th:nth-child(8), td:nth-child(8) { width: 10%; } /* Blockers */
+        th:nth-child(9), td:nth-child(9) { width: 10%; } /* Remarks */
+        th:nth-child(10), td:nth-child(10) { width: 9%; } /* Contact */
+        th:nth-child(11), td:nth-child(11) { width: 8%; } /* Actions */
+
+        th {
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: var(--transition);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        th:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        th.sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 0.5rem;
+            opacity: 0.5;
+        }
+
+        th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+
+        tr {
+            transition: var(--transition);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }.status-interview {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+        }
+
+        .status-training {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+        }
+
+        .status-working {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+        }
+
+        .status-scheduling {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.2));
+        }
+
+        .status-idle {
+            background: linear-gradient(135deg, rgba(156, 163, 175, 0.2), rgba(107, 114, 128, 0.2));
+        }
+
+        .candidate-name {
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .candidate-name:hover {
+            text-decoration: underline;
+            color: #e5e5e5;
+        }
+
+        .document-link {
+            color: var(--info-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .document-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .btn-upload {
+            background: rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 6px;
+            color: #3b82f6;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-upload:hover {
+            background: rgba(59, 130, 246, 0.5);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .upload-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: var(--shadow);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 1rem 0;
+        }        .upload-area:hover {
+            border-color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.1);
+        }.upload-area.dragover {
+            border-color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .upload-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 0.5rem;
+        }
+
+        .file-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .file-name {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-size {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .status-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .status-select option {
+            background: #000000;
+            color: white;
+        }.status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid;
+            display: inline-block;
+        }
+
+        .status-badge.status-interview {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.3));
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.5);
+        }
+
+        .status-badge.status-scheduling {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(147, 51, 234, 0.3));
+            color: #a855f7;
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .status-badge.status-training {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.3));
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .status-badge.status-working {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .status-badge.status-idle {
+            background: linear-gradient(135deg, rgba(156, 163, 175, 0.3), rgba(107, 114, 128, 0.3));
+            color: #9ca3af;
+            border-color: rgba(156, 163, 175, 0.5);
+        }        .date-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+        }        .date-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        
+        .blockers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.2rem;
+            max-height: 2.5rem;
+            overflow-y: auto;            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        .blocker-tag {
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid;
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.3));
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.5);
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin: 0.1rem;
+        }        .no-blockers {
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid;
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            color: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .contact-icons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 12px;
+            transition: var(--transition);
+            cursor: pointer;
+        }        .contact-icon.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .contact-icon.whatsapp:hover {
+            background: #128C7E;
+            transform: scale(1.1);
+        }
+
+        .contact-icon.whatsapp svg {
+            width: 14px;
+            height: 14px;
+        }.contact-icon.email {
+            background: #EA4335;
+            color: white;
+        }
+
+        .contact-icon.email:hover {
+            background: #D33B2C;
+            transform: scale(1.1);
+        }
+
+        .contact-icon.email svg {
+            width: 14px;
+            height: 14px;
+        }.contact-icon.link {
+            background: #6366F1;
+            color: white;
+        }
+
+        .contact-icon.link:hover {
+            background: #4F46E5;
+            transform: scale(1.1);
+        }
+
+        .contact-icons {
+            display: flex;
+            gap: 0.5rem;
+        }        .contact-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0.8;
+        }.contact-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }        .edit-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 0.25rem 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+            width: 100%;
+        }        .row-editing {
+            background: rgba(59, 130, 246, 0.2) !important;
+            border: 2px solid var(--accent-color);
+        }
+
+        .row-editing td {
+            padding: 0.5rem;
+        }
+        
+        .edit-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-actions .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            min-width: 70px;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .edit-actions .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Enhanced Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.4rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.6rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 32px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-btn.edit-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .action-btn.edit-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .action-btn.delete-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .action-btn.delete-btn:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translate(-50%, -60%) scale(0.9); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition);
+        }        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }/* Specific styling for select dropdown */
+        .form-input select,
+        select.form-input {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: 1px solid var(--border-color);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .form-input select option,
+        select.form-input option {
+            background: rgba(30, 30, 30, 1) !important;
+            color: white !important;
+            padding: 8px;
+        }        .form-input select:focus,
+        select.form-input:focus {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .dashboard {
+            margin: 2rem;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .dashboard-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: var(--transition);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }        .toast.error {
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        /* Calendar Styles */
+        .calendar-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem;
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;            gap: 1.5rem;
+            min-height: 400px;
+        }
+          .calendar-section {
+            flex: 0 0 27%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }.events-section {
+            flex: 0 0 40%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+
+        .calendar-events {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-events-title {
+            color: var(--accent-color);
+            font-size: 1.1rem;            font-weight: 600;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .calendar-title {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav-btn {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }        .calendar-nav-btn:hover {
+            background: rgba(59, 130, 246, 0.8);
+            transform: scale(1.05);
+        }
+
+        .calendar-plus-btn {
+            background: var(--success-color);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.5rem;
+        }
+
+        .calendar-plus-btn:hover {
+            background: rgba(16, 185, 129, 0.8);
+            transform: scale(1.1);
+        }        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            background: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .calendar-day-header {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--accent-color);
+            padding: 0.5rem 0.25rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }        .calendar-day {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 0.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .calendar-day.other-month {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .calendar-day.today {
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .calendar-day.selected {
+            background: rgba(59, 130, 246, 0.5);
+            border: 2px solid var(--accent-color);
+        }
+
+        .calendar-day.has-event {
+            position: relative;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent-color);            border-radius: 50%;
+        }
+        
+        .calendar-events {
+            margin-top: 0;
+        }
+
+        .calendar-events-title {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }        .calendar-event {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .calendar-event-time {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .interview-item {
+            display: flex;
+            flex-direction: row;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .interview-date {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .interview-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }        .interview-company {
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+        }.interview-type-highlight {
+            background: linear-gradient(45deg, var(--accent-color), #60a5fa);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+            align-self: flex-start;
+        }
+
+        .interview-remarks {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-style: italic;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            border-left: 2px solid var(--accent-color);        }/* Sand Clock Styles */
+        .sand-clock-container {
+            flex: 0 0 27%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            align-items: center;
+            justify-content: center;
+        }        .sand-clock {
+            position: relative;
+            width: 200px;
+            height: 260px;
+            margin-bottom: 1rem;
+        }        .sand-clock-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            border: 5px solid rgba(255, 255, 255, 0.4);
+            border-radius: 35px;
+            backdrop-filter: blur(15px);
+            box-shadow: 
+                0 15px 50px rgba(0, 0, 0, 0.3),
+                inset 0 3px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+            clip-path: polygon(15% 0%, 85% 0%, 85% 35%, 55% 50%, 85% 65%, 85% 100%, 15% 100%, 15% 65%, 45% 50%, 15% 35%);
+        }        .sand-clock-glass {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 30px;
+            clip-path: polygon(15% 0%, 85% 0%, 85% 35%, 55% 50%, 85% 65%, 85% 100%, 15% 100%, 15% 65%, 45% 50%, 15% 35%);
+            overflow: visible;
+        }
+
+        .sand-clock-top,
+        .sand-clock-bottom {
+            position: absolute;
+            width: calc(100% - 30%);
+            left: 15%;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .sand-clock-top {
+            top: 0;
+            height: 35%;
+            clip-path: polygon(0 0, 100% 0, 75% 100%, 25% 100%);
+        }
+
+        .sand-clock-bottom {
+            bottom: 0;
+            height: 35%;
+            clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%);
+        }        .sand-top {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            box-shadow: 
+                inset 0 -3px 12px rgba(217, 119, 6, 0.4),
+                0 0 15px rgba(251, 191, 36, 0.3);
+            clip-path: polygon(0 100%, 100% 100%, 85% 0, 15% 0);
+            transition: height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }        .sand-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            background: linear-gradient(0deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            box-shadow: 
+                inset 0 3px 12px rgba(217, 119, 6, 0.4),
+                0 0 15px rgba(251, 191, 36, 0.3);
+            clip-path: polygon(15% 100%, 85% 100%, 100% 0, 0 0);
+            transition: height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: visible;
+        }
+
+        .sand-bottom::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background: radial-gradient(ellipse, rgba(251, 191, 36, 0.6) 0%, transparent 70%);
+            animation: sandImpact 2s ease-in-out infinite;
+            opacity: 0;
+        }        .sand-collection-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            pointer-events: none;
+            overflow: visible;
+        }.collection-particle {
+            position: absolute;
+            width: 1.5px;
+            height: 1.5px;
+            background: #fbbf24;
+            border-radius: 50%;
+            opacity: 0;
+            animation: collectSand 0.8s ease-out forwards;
+        }
+
+        .collection-particle:nth-child(1) { left: 25%; animation-delay: 0.1s; background: #fbbf24; }
+        .collection-particle:nth-child(2) { left: 35%; animation-delay: 0.2s; background: #f59e0b; }
+        .collection-particle:nth-child(3) { left: 45%; animation-delay: 0.3s; background: #d97706; }
+        .collection-particle:nth-child(4) { left: 55%; animation-delay: 0.4s; background: #fbbf24; }
+        .collection-particle:nth-child(5) { left: 65%; animation-delay: 0.5s; background: #f59e0b; }
+        .collection-particle:nth-child(6) { left: 75%; animation-delay: 0.6s; background: #d97706; }
+        .collection-particle:nth-child(7) { left: 30%; animation-delay: 0.7s; background: #fbbf24; }
+        .collection-particle:nth-child(8) { left: 50%; animation-delay: 0.8s; background: #f59e0b; }
+        .collection-particle:nth-child(9) { left: 70%; animation-delay: 0.9s; background: #d97706; }
+        .collection-particle:nth-child(10) { left: 40%; animation-delay: 1.0s; background: #fbbf24; }
+
+        @keyframes collectSand {
+            0% {
+                top: -5px;
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(0.8) translateY(2px);
+            }
+            100% {
+                top: 0px;
+                opacity: 0.3;
+                transform: scale(0.5) translateY(0);
+            }
+        }        .sand-accumulation {
+            position: absolute;
+            top: 0;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(251, 191, 36, 0.4) 20%, 
+                rgba(245, 158, 11, 0.6) 50%, 
+                rgba(251, 191, 36, 0.4) 80%, 
+                transparent 100%
+            );
+            border-radius: 1px;
+            opacity: 0;
+            animation: showAccumulation 3s ease-in-out infinite;
+            transform: translateY(-1px); /* Position slightly above the sand surface */
+        }
+
+        @keyframes showAccumulation {
+            0%, 70% { opacity: 0; }
+            10%, 30% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes sandImpact {
+            0%, 90% { opacity: 0; }
+            5% { opacity: 0.8; }
+            10% { opacity: 0; }
+        }        .sand-clock-middle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            z-index: 2;
+            overflow: visible;
+        }
+
+        .sand-clock-middle::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -1px;
+            right: -1px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
+            border-radius: 4px;
+            z-index: -1;
+        }.sand-stream {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+            border-radius: 3px;
+            opacity: 0.8;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.8);
+            transition: opacity 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: visible;
+            z-index: 1;
+        }        .sand-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fbbf24;
+            border-radius: 50%;
+            left: 50%;
+            top: -10px;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: 0 0 2px rgba(251, 191, 36, 0.8);
+            z-index: 10;
+        }
+
+        .sand-particle:nth-child(2) { 
+            animation-delay: 0.2s; 
+            left: 48%;
+            animation-duration: 1.8s;
+            background: #f59e0b;
+        }
+        .sand-particle:nth-child(3) { 
+            animation-delay: 0.4s; 
+            left: 52%;
+            animation-duration: 2.2s;
+        }
+        .sand-particle:nth-child(4) { 
+            animation-delay: 0.6s; 
+            left: 49%;
+            animation-duration: 1.9s;
+            background: #d97706;
+        }
+        .sand-particle:nth-child(5) { 
+            animation-delay: 0.8s; 
+            left: 51%;
+            animation-duration: 2.1s;
+            background: #f59e0b;
+        }
+        .sand-particle:nth-child(6) { 
+            animation-delay: 1.0s; 
+            left: 50.5%;
+            animation-duration: 2.0s;
+        }
+        .sand-particle:nth-child(7) { 
+            animation-delay: 1.2s; 
+            left: 49.5%;
+            animation-duration: 1.7s;
+            background: #d97706;
+        }
+        .sand-particle:nth-child(8) { 
+            animation-delay: 1.4s; 
+            left: 51.5%;
+            animation-duration: 2.3s;
+        }
+        .sand-particle:nth-child(9) { 
+            animation-delay: 1.6s; 
+            left: 48.5%;
+            animation-duration: 1.8s;
+            background: #f59e0b;
+        }
+        .sand-particle:nth-child(10) { 
+            animation-delay: 1.8s; 
+            left: 50%;
+            animation-duration: 2.0s;
+        }        @keyframes sandDrop {
+            0% {
+                top: -10px;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            10% {
+                top: 30px;
+                opacity: 1;
+                transform: translateX(-50%) scale(1.1);
+            }
+            25% {
+                top: 70px;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            40% {
+                top: 120px;
+                opacity: 1;
+                transform: translateX(-50%) scale(0.9);
+            }
+            45% {
+                top: 130px; /* Middle section - narrowest part */
+                opacity: 1;
+                transform: translateX(-50%) scale(0.7);
+            }
+            55% {
+                top: 140px; /* Just past middle */
+                opacity: 1;
+                transform: translateX(-50%) scale(0.8);
+            }
+            70% {
+                top: 180px;
+                opacity: 0.9;
+                transform: translateX(-50%) scale(0.9);
+            }
+            85% {
+                top: 220px;
+                opacity: 0.7;
+                transform: translateX(-50%) scale(0.8);
+            }
+            95% {
+                top: 250px;
+                opacity: 0.4;
+                transform: translateX(-50%) scale(0.6);
+            }
+            100% {
+                top: 260px;
+                opacity: 0;
+                transform: translateX(-50%) scale(0.4);
+            }
+        }.sand-clock-shine {
+            position: absolute;
+            top: 15%;
+            left: 25%;
+            width: 28px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+            border-radius: 50px;
+            transform: rotate(15deg);
+            z-index: 3;
+            opacity: 0.8;
+        }        .sand-clock-base {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
+            border-radius: 6px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }        .sand-clock-top-cap {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
+            border-radius: 6px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }        .sand-clock-time {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .sand-clock-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .sand-clock-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;            text-align: center;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes dayProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Notification Section Styles */
+        .notification-section {
+            flex: 0 0 25%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .notification-header h3 {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .notification-badge {
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .notification-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-color);
+        }
+
+        .notification-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-text {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .notification-footer {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-clear-all {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-clear-all:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            margin-top: 2rem;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-left,
+        .footer-center,
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-brand {
+            color: var(--accent-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }        .footer-version {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        .footer-copyright {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                min-width: unset;
+            }
+            
+            .control-buttons {
+                justify-content: center;
+            }
+        } /* <-- This closes the 1024px block! */
+        @media (max-width: 768px) {
+            .header {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .controls, .table-container, .dashboard {
+                margin: 1rem;
+            }
+
+            .calendar-container {
+                flex-direction: column;
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .calendar-section {
+                flex: none;
+            }
+
+            .events-section {
+                flex: none;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                padding-left: 0;
+                padding-top: 1rem;
+                margin-top: 1rem;
+            }
+
+            .calendar-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .calendar-nav {
+                justify-content: center;
+            }
+            .table-wrapper {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+            }
+            
+            .table-wrapper {
+                font-size: 0.7rem;
+            }
+            
+            th, td {
+                padding: 0.25rem;
+            }            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Footer responsive */
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .footer-left,
+            .footer-center,
+            .footer-right {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .footer-left {
+                order: 1;
+            }
+
+            .footer-center {
+                order: 2;
+            }
+
+            .footer-right {
+                order: 3;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for keyboard navigation */
+        .btn:focus,
+        .search-input:focus,
+        .candidate-name:focus,
+        .document-link:focus,
+        .status-select:focus,
+        .date-input:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Print styles */
+        @media print {
+            .controls,
+            .dashboard,
+            .modal {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            .table-container {
+                background: white !important;
+                border: 1px solid #ccc !important;                box-shadow: none !important;
+            }
+            
+            th, td {
+                color: black !important;
+                border-bottom: 1px solid #ccc !important;
+            }
+        }
+    </style>
+    
+    <!-- SheetJS library for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="header">
+        <div class="header-content">
+            <h1>Protos Nexus</h1>
+            <p>Professional recruitment and candidate tracking platform</p>
+        </div>
+    </div>
+    
+    <!-- Calendar Section -->
+    <div class="calendar-container">
+        <div class="calendar-section">
+            <div class="calendar-events-title">Calendar</div>
+            <div class="calendar-header">
+                <h3 class="calendar-title" id="calendarTitle">June 2025</h3>                <div class="calendar-nav">
+                    <button class="calendar-nav-btn" onclick="previousMonth()">◀</button>
+                    <button class="calendar-nav-btn" onclick="nextMonth()">▶</button>
+                    <button class="calendar-nav-btn" onclick="goToToday()">Today</button>
+                    <button class="calendar-plus-btn" onclick="openScheduleModal()" title="Schedule Interview">+</button>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Day headers -->
+                <div class="calendar-day-header">Sun</div>
+                <div class="calendar-day-header">Mon</div>
+                <div class="calendar-day-header">Tue</div>
+                <div class="calendar-day-header">Wed</div>
+                <div class="calendar-day-header">Thu</div>
+                <div class="calendar-day-header">Fri</div>
+                <div class="calendar-day-header">Sat</div>
+                <!-- Calendar days will be populated by JavaScript -->
+            </div>
+            <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
+                Double-click any date to schedule an interview
+            </div>
+        </div>
+        
+        <div class="events-section">
+            <div class="calendar-events" id="upcomingEvents">
+                <div class="calendar-events-title">Upcoming Interviews</div>
+                <div id="upcomingInterviews">Loading upcoming interviews...</div>
+            </div>
+        </div>        <!-- Sand Clock Section -->
+        <div class="sand-clock-container">            <div class="sand-clock-time" id="currentTime">00:00:00</div>
+            <div class="sand-clock">
+                <div class="sand-clock-top-cap"></div>
+                <div class="sand-clock-frame"></div>
+                <div class="sand-clock-glass">
+                    <div class="sand-clock-top">
+                        <div class="sand-top"></div>
+                    </div>                    <div class="sand-clock-middle">
+                        <div class="sand-stream">
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                            <div class="sand-particle"></div>
+                        </div>
+                    </div>                    <div class="sand-clock-bottom">
+                        <div class="sand-bottom">
+                            <div class="sand-collection-particles">
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                                <div class="collection-particle"></div>
+                            </div>
+                            <div class="sand-accumulation"></div>
+                        </div>
+                    </div>
+                </div>                <div class="sand-clock-shine"></div>
+                <div class="sand-clock-base"></div>
+            </div>
+        </div>
+    </div><div class="controls">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search candidates, companies, projects...">
+            <span class="search-icon">🔍</span>
+        </div>
+          <div class="control-buttons">
+            <button class="btn btn-primary" onclick="addCandidate()">
+                ➕ Add Candidate
+            </button>
+            <button class="btn btn-secondary" onclick="exportData()">
+                📊 Export to Excel
+            </button>
+            <button class="btn btn-secondary" onclick="window.open('history.html', '_blank')">
+                📋 History
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <div class="table-wrapper">            <table id="candidateTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="name">Candidate</th>
+                        <th class="sortable" data-sort="status">Work Status</th>
+                        <th class="sortable" data-sort="document">Document</th>
+                        <th class="sortable" data-sort="interview">Interview</th>
+                        <th class="sortable" data-sort="company">Company</th>
+                        <th class="sortable" data-sort="project">Project</th>
+                        <th class="sortable" data-sort="date">Date</th>
+                        <th>Blockers</th>
+                        <th>Remarks</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="candidateTableBody">
+                    <!-- Data will be populated by JavaScript -->
+                </tbody>
+            </table>        </div>
+    </div>
+
+    <!-- Candidate Detail Modal -->
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Candidate Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>            <form id="candidateForm" onsubmit="return handleModalSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="modalName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="modalEmail" class="form-input" required>
+                </div>                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" id="modalPhone" class="form-input">
+                </div>                <div class="form-group">
+                    <label class="form-label">Working Status</label>
+                    <select id="modalStatus" class="form-input">
+                        <option value="Idle">Idle</option>
+                        <option value="Training">Training</option>
+                        <option value="Scheduling">Scheduling</option>
+                        <option value="Interview">Interview</option>
+                        <option value="L2">L2</option>
+                        <option value="L3">L3</option>
+                        <option value="Working">Working</option>
+                    </select>
+                </div><div class="form-group">
+                    <label class="form-label">Company</label>
+                    <input type="text" id="modalCompany" class="form-input">
+                </div><div class="form-group">
+                    <label class="form-label">Project</label>
+                    <input type="text" id="modalProject" class="form-input">
+                </div>                <div class="form-group" style="text-align: center;">
+                    <button type="submit" id="modalSubmitBtn" class="btn btn-primary" style="width: auto; padding: 12px 24px;">Add Candidate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Document Upload Modal -->
+    <div id="uploadModal" class="upload-modal">
+        <div class="upload-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Upload Document</h2>
+                <button class="close-btn" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 2rem;">📄</div>
+                <div class="upload-text">
+                    <strong>Click to upload</strong> or drag and drop<br>
+                    PDF files only (Max 10MB)
+                </div>
+            </div>
+            <input type="file" id="fileInput" class="file-input" accept=".pdf" onchange="handleFileSelect(event)">
+            <div id="fileInfo" class="file-info">
+                <div id="fileName" class="file-name"></div>
+                <div id="fileSize" class="file-size"></div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">                <button class="btn btn-primary" onclick="uploadFile()" id="uploadBtn" disabled style="flex: 1;">
+                    📤 Upload Document
+                </button>
+                <button class="btn btn-secondary" onclick="closeUploadModal()" style="flex: 1;">
+                    ❌ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Interview Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Schedule Interview</h2>
+                <button class="close-btn" onclick="closeScheduleModal()">&times;</button>
+            </div>
+            <form id="scheduleForm" onsubmit="handleScheduleSubmit(event)">
+                <div class="form-group">
+                    <label for="scheduleCandidate">Select Candidate</label>
+                    <select id="scheduleCandidate" class="form-input" required>
+                        <option value="">Choose a candidate...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleCompany">Company Name</label>
+                    <input type="text" id="scheduleCompany" class="form-input" placeholder="Enter company name" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleDate">Interview Date</label>
+                    <input type="date" id="scheduleDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleTime">Interview Time</label>
+                    <input type="time" id="scheduleTime" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleType">Interview Type</label>
+                    <select id="scheduleType" class="form-input" required>
+                        <option value="">Select type...</option>
+                        <option value="First Round">First Round</option>
+                        <option value="Second Round">Second Round</option>
+                        <option value="Third Round">Third Round</option>
+                        <option value="Final Round">Final Round</option>
+                        <option value="Rescheduling">Rescheduling</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        📅 Schedule Interview
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()" style="flex: 1;">
+                        ❌ Cancel
+                    </button>
+                </div>
+            </form>        </div>
+    </div>
+    
+    <script>
+        // Candidate data structure - starts empty
+        let candidates = [];
+
+        // Initialize with sample data
+        function initializeData() {
+            const sampleData = [
+                {
+                    id: 1,
+                    name: "MD Ashhaad Sadique",
+                    email: "ashhaad@example.com",
+                    phone: "+1234567890",
+                    status: "Interview",
+                    document: "resume_ashhaad.pdf",
+                    interview: "2025-06-27T14:00",
+                    interviewType: "First Round",
+                    company: "TechCorp",
+                    project: "",
+                    date: "",
+                    blockers: [],
+                    remarks: "Awaiting Interview"
+                },
+                {
+                    id: 2,
+                    name: "Sarah Johnson",
+                    email: "sarah@example.com", 
+                    phone: "+1234567891",
+                    status: "Working",
+                    document: "resume_sarah.pdf",
+                    interview: "2025-06-20T10:00",
+                    interviewType: "Technical",
+                    company: "Protos Solutions",
+                    project: "Web Development",
+                    date: "2025-06-01",
+                    blockers: [],
+                    remarks: "Active Employee"
+                },
+                {
+                    id: 3,
+                    name: "Mike Wilson",
+                    email: "mike@example.com",
+                    phone: "+1234567892", 
+                    status: "L2",
+                    document: "resume_mike.pdf",
+                    interview: "2025-06-25T16:00",
+                    interviewType: "Second Round",
+                    company: "",
+                    project: "",
+                    date: "",
+                    blockers: [],
+                    remarks: "L2 Interview Scheduled"
+                },
+                {
+                    id: 4,
+                    name: "Emily Davis",
+                    email: "emily@example.com",
+                    phone: "+1234567893",
+                    status: "Idle",
+                    document: "",
+                    interview: "",
+                    interviewType: "",
+                    company: "",
+                    project: "",
+                    date: "",
+                    blockers: ["Visa processing"],
+                    remarks: "Currently Idle"
+                }
+            ];            // Load from localStorage or start with empty array
+            const savedData = localStorage.getItem('candidates');
+            if (savedData) {
+                candidates = JSON.parse(savedData);
+            } else {
+                candidates = [];
+                saveCandidates();
+            }
+        }// Save candidates to localStorage
+        function saveCandidates() {
+            localStorage.setItem('candidates', JSON.stringify(candidates));
+        }
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            currentTheme = savedTheme;
+        }
+
+        let currentEditingCell = null;
+        let currentEditingRow = null;
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+        let currentTheme = 'light';
+        let currentUploadCandidateId = null;
+        let selectedFile = null;
+
+        // Open candidate detail modal
+        function openCandidateModal(candidateId) {
+            console.log('openCandidateModal called with:', candidateId);
+            
+            try {
+                if (candidateId === null) {
+                    console.log('Creating new candidate modal');
+                    // New candidate - clear all fields
+                    document.getElementById('modalName').value = '';
+                    document.getElementById('modalEmail').value = '';
+                    document.getElementById('modalPhone').value = '';
+                    document.getElementById('modalCompany').value = '';
+                    document.getElementById('modalProject').value = '';
+                    
+                    // For new candidates, only show Idle and Training options
+                    const statusSelect = document.getElementById('modalStatus');
+                    statusSelect.innerHTML = `
+                        <option value="Idle">Idle</option>
+                        <option value="Training">Training</option>
+                    `;
+                    statusSelect.value = 'Idle';
+                    
+                    // Update button text for new candidate
+                    document.getElementById('modalSubmitBtn').textContent = 'Add Candidate';
+                    
+                    // Store null to indicate new candidate
+                    document.getElementById('candidateForm').dataset.candidateId = 'new';                } else {
+                    console.log('Editing existing candidate:', candidateId);
+                    // Existing candidate - populate with current data
+                    const candidate = candidates.find(c => c.id === candidateId);
+                    if (!candidate) return;
+                    
+                    // For existing candidates, show all status options
+                    const statusSelect = document.getElementById('modalStatus');
+                    statusSelect.innerHTML = `
+                        <option value="Idle">Idle</option>
+                        <option value="Training">Training</option>
+                        <option value="Scheduling">Scheduling</option>
+                        <option value="Interview">Interview</option>
+                        <option value="L2">L2</option>
+                        <option value="L3">L3</option>
+                        <option value="Working">Working</option>
+                    `;
+
+                    document.getElementById('modalName').value = candidate.name;
+                    document.getElementById('modalEmail').value = candidate.email;
+                    document.getElementById('modalPhone').value = candidate.phone;
+                    document.getElementById('modalCompany').value = candidate.company;
+                    document.getElementById('modalProject').value = candidate.project;
+                    document.getElementById('modalStatus').value = candidate.status;
+
+                    // Update button text for editing
+                    document.getElementById('modalSubmitBtn').textContent = 'Update Candidate';
+
+                    // Store current candidate ID for saving
+                    document.getElementById('candidateForm').dataset.candidateId = candidateId;
+                }
+                  console.log('Showing modal');
+                // Set initial visibility of company and project fields
+                handleStatusChange();
+                // Show modal
+                document.getElementById('candidateModal').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal should be visible now');
+            } catch (error) {
+                console.error('Error in openCandidateModal:', error);
+                alert('Error opening modal: ' + error.message);
+            }
+        }
+
+        // Make function globally accessible
+        window.openCandidateModal = openCandidateModal;
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('candidateModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Add new candidate
+        function addCandidate() {
+            console.log('addCandidate function called');
+            try {
+                // Open modal for new candidate (don't add to array yet)
+                openCandidateModal(null); // Pass null to indicate new candidate
+            } catch (error) {
+                console.error('Error in addCandidate:', error);
+                alert('Error opening modal: ' + error.message);
+            }
+        }
+
+        // Make function globally accessible
+        window.addCandidate = addCandidate;
+
+        // Schedule Interview Modal Functions
+        function openScheduleModal() {
+            const modal = document.getElementById('scheduleModal');
+            const candidateSelect = document.getElementById('scheduleCandidate');            const companyInput = document.getElementById('scheduleCompany');
+            
+            // Clear and populate candidate dropdown (exclude Working status)
+            candidateSelect.innerHTML = '<option value="">Choose a candidate...</option>';
+            candidates
+                .filter(candidate => candidate.status !== 'Working')
+                .forEach(candidate => {
+                    const option = document.createElement('option');
+                    option.value = candidate.id;
+                    option.textContent = candidate.name;
+                    candidateSelect.appendChild(option);
+                });
+            
+            // Add event listener to auto-populate company name
+            candidateSelect.addEventListener('change', function() {
+                const selectedCandidateId = parseInt(this.value);
+                if (selectedCandidateId) {
+                    const selectedCandidate = candidates.find(c => c.id === selectedCandidateId);
+                    if (selectedCandidate && selectedCandidate.company) {
+                        companyInput.value = selectedCandidate.company;
+                    } else {
+                        companyInput.value = '';
+                    }
+                } else {
+                    companyInput.value = '';
+                }
+            });
+            
+            // Set default date to today
+            const today = new Date();
+            document.getElementById('scheduleDate').value = today.toISOString().split('T')[0];
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Clear form
+            document.getElementById('scheduleForm').reset();
+        }
+
+        // Close modal when clicking outside or pressing Escape
+        document.addEventListener('click', function(event) {
+            const scheduleModal = document.getElementById('scheduleModal');
+            if (event.target === scheduleModal) {
+                closeScheduleModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const scheduleModal = document.getElementById('scheduleModal');
+                if (scheduleModal && scheduleModal.style.display === 'block') {
+                    closeScheduleModal();
+                }
+            }
+        });
+
+        function handleScheduleSubmit(event) {
+            event.preventDefault();
+            
+            const candidateId = parseInt(document.getElementById('scheduleCandidate').value);
+            const company = document.getElementById('scheduleCompany').value;
+            const date = document.getElementById('scheduleDate').value;
+            const time = document.getElementById('scheduleTime').value;
+            const type = document.getElementById('scheduleType').value;
+              // Find the candidate and update their interview date
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (candidate) {
+                const interviewDateTime = `${date}T${time}`;
+                candidate.interview = interviewDateTime;
+                candidate.interviewType = type; // Store interview type separately
+                candidate.company = company; // Update company name
+                
+                // Update status based on interview type
+                if (type !== 'Rescheduling' && candidate.status !== 'Working') {
+                    candidate.status = 'Interview';
+                }
+                  // Update remarks based on status instead of interview details
+                candidate.status = getRemarksByStatus(candidate.status);
+                
+                // Refresh the table and calendar
+                renderTable();
+                renderCalendar();
+                displayUpcomingInterviews();
+                
+                closeScheduleModal();                showToast(`Interview scheduled for ${candidate.name} at ${company} on ${formatDateTime(interviewDateTime)}`, 'success');
+            }
+        }
+        
+        // Make schedule functions globally accessible
+        window.openScheduleModal = openScheduleModal;
+        window.closeScheduleModal = closeScheduleModal;
+        window.handleScheduleSubmit = handleScheduleSubmit;
+
+        // Open schedule modal with pre-selected date
+        function openScheduleModalWithDate(dateStr) {
+            openScheduleModal();
+            document.getElementById('scheduleDate').value = dateStr;
+        }
+
+        window.openScheduleModalWithDate = openScheduleModalWithDate;
+
+        // Calendar functionality
+        let currentDate = new Date();
+        let selectedDate = null;        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update title
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            
+            const calendarTitle = document.getElementById('calendarTitle');
+            const calendarGrid = document.getElementById('calendarGrid');
+              // Safety checks for calendar elements
+            if (!calendarTitle || !calendarGrid) {
+                console.warn('Calendar elements not found, skipping calendar update');
+                return;
+            }
+            
+            calendarTitle.textContent = `${monthNames[month]} ${year}`;
+            
+            // Remove only the calendar day buttons, keep the headers
+            const existingDays = calendarGrid.querySelectorAll('.calendar-day');
+            existingDays.forEach(day => day.remove());
+              // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            // Add previous month's trailing days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const dayElement = createDayElement(day, true, year, month - 1);
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // Add current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = createDayElement(day, false, year, month);
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // Add next month's leading days to complete 6 weeks (42 total cells - 7 headers = 35 day cells)
+            const totalDaysAdded = firstDay + daysInMonth;
+            const remainingCells = 35 - totalDaysAdded;
+            for (let day = 1; day <= remainingCells; day++) {
+                const dayElement = createDayElement(day, true, year, month + 1);                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function createDayElement(day, isOtherMonth, year, month) {
+            const dayElement = document.createElement('button');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+            
+            if (isOtherMonth) {
+                dayElement.classList.add('other-month');
+            }
+            
+            // Check if it's today
+            const today = new Date();            if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate() && !isOtherMonth) {
+                dayElement.classList.add('today');
+            }
+            
+            // Check for events (interviews)
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const hasEvent = candidates.some(candidate => 
+                candidate.interview && candidate.interview.startsWith(dateStr)
+            );
+            
+            if (hasEvent && !isOtherMonth) {
+                dayElement.classList.add('has-event');
+            }
+            
+            // Add click event
+            dayElement.addEventListener('click', () => {
+                if (!isOtherMonth) {
+                    selectDate(year, month, day);
+                } else {
+                    // Navigate to the other month
+                    if (month < currentDate.getMonth() || year < currentDate.getFullYear()) {
+                        previousMonth();
+                    } else {
+                        nextMonth();
+                    }
+                }
+            });
+
+            // Add double-click event to schedule interview
+            dayElement.addEventListener('dblclick', () => {
+                if (!isOtherMonth) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    openScheduleModalWithDate(dateStr);
+                }
+            });
+            
+            return dayElement;
+        }
+
+        function selectDate(year, month, day) {
+            // Remove previous selection
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selection to clicked day
+            event.target.classList.add('selected');
+            
+            selectedDate = new Date(year, month, day);
+            // Keep the upcoming interviews display instead of showing selected date events
+            displayUpcomingInterviews();
+        }
+
+        function displayUpcomingInterviews() {
+            const eventsContainer = document.getElementById('upcomingInterviews');
+            
+            // Safety check to ensure the events container element exists
+            if (!eventsContainer) {
+                console.warn('Upcoming interviews container not found, skipping update');
+                return;
+            }
+            
+            const today = new Date();
+            
+            // Get interviews from today onwards
+            const upcomingInterviews = candidates
+                .filter(candidate => {
+                    if (!candidate.interview) return false;
+                    const interviewDate = new Date(candidate.interview);
+                    return interviewDate >= today;
+                })
+                .sort((a, b) => new Date(a.interview) - new Date(b.interview))
+                .slice(0, 5); // Show only next 5 interviews
+            if (upcomingInterviews.length === 0) {
+                eventsContainer.innerHTML = `<div style="color: rgba(255, 255, 255, 0.6);">No upcoming interviews scheduled</div>`;
+            } else {
+                const eventsHTML = upcomingInterviews.map(candidate => {
+                    const interviewDate = new Date(candidate.interview);
+                    const dateStr = formatDateTime(candidate.interview);
+                    const time = candidate.interview.split('T')[1] || '00:00';
+                    const interviewType = candidate.interviewType || 'Interview'; // Default if not set
+                    return `
+                        <div class="calendar-event">
+                            <div class="interview-item">
+                                <span class="interview-date">${dateStr}</span>
+                                <span class="interview-name">${candidate.name}</span>
+                                <span class="interview-company">${candidate.company || 'N/A'}</span>
+                                <span class="interview-type-highlight">${interviewType}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                eventsContainer.innerHTML = eventsHTML;
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();        }        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            initializeData();
+            renderTable();
+            updateDashboard();
+            setupEventListeners();
+            loadTheme();
+            renderCalendar();
+            displayUpcomingInterviews();
+            initializeSandClock();
+        });        // Sand Clock Functions
+        function initializeSandClock() {
+            updateSandClock();
+            // Update more frequently for smoother sand movement
+            setInterval(updateSandClock, 100); // Update every 100ms (10 times per second)
+        }        function updateSandClock() {
+            const now = new Date();
+            const timeElement = document.getElementById('currentTime');
+            
+            if (timeElement) {
+                // Update time display
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                timeElement.textContent = timeString;
+                
+                // Calculate precise progress through the day including milliseconds
+                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const msInDay = 24 * 60 * 60 * 1000; // 86,400,000 milliseconds in a day
+                const msElapsed = now.getTime() - startOfDay.getTime();
+                
+                // Get more precise percentage (including seconds and milliseconds)
+                const progressPercent = Math.min(100, Math.max(0, (msElapsed / msInDay) * 100));
+                
+                // Calculate exact sand flow rate (grains per second simulation)
+                const secondsElapsed = msElapsed / 1000;
+                const totalSecondsInDay = 86400;
+                const sandFlowRate = progressPercent / 100;
+                  // Update sand levels based on precise time calculations
+                const sandTop = document.querySelector('.sand-top');
+                const sandBottom = document.querySelector('.sand-bottom');
+                const sandStream = document.querySelector('.sand-stream');
+                const sandParticles = document.querySelectorAll('.sand-particle');
+                const collectionParticles = document.querySelectorAll('.collection-particle');
+                const accumulation = document.querySelector('.sand-accumulation');
+                
+                if (sandTop && sandBottom) {
+                    // More precise sand calculations
+                    const sandTopHeight = Math.max(0, 100 - progressPercent);
+                    const sandBottomHeight = Math.min(100, progressPercent);
+                      // Apply gradual height changes
+                    sandTop.style.height = sandTopHeight.toFixed(2) + '%';
+                    sandBottom.style.height = sandBottomHeight.toFixed(2) + '%';
+                    
+                    // Calculate dynamic sand colors based on time of day
+                    const hour = now.getHours();
+                    const minute = now.getMinutes();
+                    const timeDecimal = hour + (minute / 60); // Convert to decimal hours
+                    
+                    let sandColors = {
+                        primary: '#fbbf24',   // Default gold
+                        secondary: '#f59e0b', // Default amber
+                        tertiary: '#d97706'   // Default orange
+                    };
+                    
+                    // Define color transitions throughout the day
+                    if (timeDecimal >= 0 && timeDecimal < 6) {
+                        // Night/Early Dawn (0-6 AM) - Deep blue to purple
+                        const t = timeDecimal / 6;
+                        sandColors.primary = `hsl(${240 - (t * 40)}, 70%, ${30 + (t * 20)}%)`;   // Deep blue to purple
+                        sandColors.secondary = `hsl(${250 - (t * 50)}, 60%, ${25 + (t * 15)}%)`;
+                        sandColors.tertiary = `hsl(${260 - (t * 60)}, 80%, ${20 + (t * 10)}%)`;
+                    } else if (timeDecimal >= 6 && timeDecimal < 9) {
+                        // Dawn (6-9 AM) - Purple to pink to gold
+                        const t = (timeDecimal - 6) / 3;
+                        sandColors.primary = `hsl(${320 + (t * 40)}, ${60 + (t * 20)}%, ${50 + (t * 15)}%)`;   // Pink to gold
+                        sandColors.secondary = `hsl(${340 + (t * 20)}, ${50 + (t * 30)}%, ${45 + (t * 20)}%)`;
+                        sandColors.tertiary = `hsl(${350 + (t * 10)}, ${70 + (t * 10)}%, ${40 + (t * 25)}%)`;
+                    } else if (timeDecimal >= 9 && timeDecimal < 17) {
+                        // Day (9 AM - 5 PM) - Bright gold/yellow
+                        const t = (timeDecimal - 9) / 8;
+                        sandColors.primary = `hsl(${45 - (t * 5)}, ${75 + (t * 10)}%, ${60 + (t * 10)}%)`;    // Bright gold
+                        sandColors.secondary = `hsl(${35 - (t * 5)}, ${70 + (t * 15)}%, ${55 + (t * 10)}%)`;
+                        sandColors.tertiary = `hsl(${25 - (t * 5)}, ${80 + (t * 5)}%, ${50 + (t * 15)}%)`;
+                    } else if (timeDecimal >= 17 && timeDecimal < 20) {
+                        // Sunset (5-8 PM) - Gold to orange to red
+                        const t = (timeDecimal - 17) / 3;
+                        sandColors.primary = `hsl(${40 - (t * 25)}, ${80 + (t * 10)}%, ${65 - (t * 15)}%)`;   // Gold to orange
+                        sandColors.secondary = `hsl(${30 - (t * 20)}, ${75 + (t * 15)}%, ${60 - (t * 10)}%)`;
+                        sandColors.tertiary = `hsl(${20 - (t * 15)}, ${85 + (t * 5)}%, ${55 - (t * 5)}%)`;
+                    } else {
+                        // Evening/Night (8 PM - Midnight) - Red to deep blue
+                        const t = (timeDecimal - 20) / 4;
+                        sandColors.primary = `hsl(${10 - (t * 130)}, ${70 - (t * 20)}%, ${45 - (t * 15)}%)`;   // Red to deep blue
+                        sandColors.secondary = `hsl(${0 - (t * 140)}, ${65 - (t * 25)}%, ${40 - (t * 15)}%)`;
+                        sandColors.tertiary = `hsl(${350 - (t * 110)}, ${75 - (t * 25)}%, ${35 - (t * 15)}%)`;
+                    }
+                    
+                    // Apply colors to sand elements
+                    if (sandTop) {
+                        sandTop.style.background = `linear-gradient(180deg, ${sandColors.primary} 0%, ${sandColors.secondary} 50%, ${sandColors.tertiary} 100%)`;
+                        sandTop.style.boxShadow = `
+                            inset 0 -3px 12px ${sandColors.tertiary}66,
+                            0 0 15px ${sandColors.primary}4D
+                        `;
+                    }
+                    
+                    if (sandBottom) {
+                        sandBottom.style.background = `linear-gradient(0deg, ${sandColors.primary} 0%, ${sandColors.secondary} 50%, ${sandColors.tertiary} 100%)`;
+                        sandBottom.style.boxShadow = `
+                            inset 0 3px 12px ${sandColors.tertiary}66,
+                            0 0 15px ${sandColors.primary}4D
+                        `;
+                    }
+                    
+                    // Dynamic sand stream intensity based on remaining sand
+                    const streamIntensity = Math.max(0.1, sandTopHeight / 100);
+                    
+                    // Show sand stream and particles only when there's sand flowing
+                    if (sandStream) {                        if (sandTopHeight > 0.01) { // Allow for tiny amounts
+                            // Vary stream opacity based on sand remaining
+                            const streamOpacity = Math.max(0.3, 0.8 * streamIntensity);
+                            sandStream.style.opacity = streamOpacity.toString();
+                            
+                            // Update sand stream colors
+                            sandStream.style.background = `linear-gradient(to bottom, ${sandColors.primary}, ${sandColors.secondary})`;
+                            sandStream.style.boxShadow = `0 0 12px ${sandColors.primary}CC`;
+                            
+                            // Activate particle animations with variable speed
+                            sandParticles.forEach((particle, index) => {
+                                particle.style.animationPlayState = 'running';
+                                particle.style.display = 'block';
+                                
+                                // Update particle colors dynamically
+                                const particleColors = [sandColors.primary, sandColors.secondary, sandColors.tertiary];
+                                particle.style.background = particleColors[index % 3];
+                                particle.style.boxShadow = `0 0 2px ${sandColors.primary}CC`;
+                                
+                                // Calculate where particles should land (on sand surface)
+                                const bottomChamberStart = 140; // pixels from top where bottom chamber starts
+                                const bottomChamberHeight = 120; // total height of bottom chamber
+                                const sandSurfacePosition = bottomChamberStart + (bottomChamberHeight * (100 - sandBottomHeight) / 100);
+                                
+                                // Adjust particle animation speed based on sand flow
+                                const baseDelay = (index * 0.2);
+                                const speedMultiplier = 0.5 + (streamIntensity * 0.5); // 0.5x to 1x speed
+                                const newDuration = (2.0 / speedMultiplier).toFixed(1) + 's';
+                                
+                                particle.style.animationDuration = newDuration;
+                                particle.style.animationDelay = baseDelay + 's';
+                                
+                                // Create dynamic landing animation
+                                particle.animate([
+                                    { 
+                                        top: '-10px',
+                                        opacity: 1,
+                                        transform: 'translateX(-50%) scale(1)'
+                                    },
+                                    { 
+                                        top: '30px',
+                                        opacity: 1,
+                                        transform: 'translateX(-50%) scale(1.1)'
+                                    },
+                                    { 
+                                        top: '70px',
+                                        opacity: 1,
+                                        transform: 'translateX(-50%) scale(1)'
+                                    },
+                                    { 
+                                        top: '120px',
+                                        opacity: 1,
+                                        transform: 'translateX(-50%) scale(0.9)'
+                                    },
+                                    { 
+                                        top: '130px', // Middle section
+                                        opacity: 1,
+                                        transform: 'translateX(-50%) scale(0.7)'
+                                    },
+                                    { 
+                                        top: '140px', // Just past middle
+                                        opacity: 1,
+                                        transform: 'translateX(-50%) scale(0.8)'
+                                    },
+                                    { 
+                                        top: `${sandSurfacePosition - 10}px`,
+                                        opacity: 0.9,
+                                        transform: 'translateX(-50%) scale(0.9)'
+                                    },
+                                    { 
+                                        top: `${sandSurfacePosition}px`, // Land on sand surface
+                                        opacity: 0.3,
+                                        transform: 'translateX(-50%) scale(0.5)'
+                                    }
+                                ], {
+                                    duration: parseFloat(newDuration) * 1000,
+                                    easing: 'linear',
+                                    delay: baseDelay * 1000,
+                                    fill: 'forwards',
+                                    iterations: Infinity
+                                });
+                            });// Activate collection particle effects when sand is accumulating
+                            if (collectionParticles && sandBottomHeight > 0) {
+                                // Calculate the sand surface position within the bottom chamber
+                                // sandBottomHeight is the percentage of the bottom chamber filled
+                                // We need to position particles at the top of the filled area
+                                  collectionParticles.forEach((particle, index) => {
+                                    particle.style.animationPlayState = 'running';
+                                    particle.style.display = 'block';
+                                    
+                                    // Update collection particle colors
+                                    const collectionColors = [sandColors.primary, sandColors.secondary, sandColors.tertiary];
+                                    particle.style.background = collectionColors[index % 3];
+                                    
+                                    // Position particles to land on the sand surface
+                                    // Since sandBottomHeight grows upward, the surface is at the top
+                                    const surfacePosition = (100 - sandBottomHeight) + '%';
+                                    
+                                    // Vary collection timing based on sand flow
+                                    const collectionDelay = (index * 0.1) + (Math.random() * 0.3);
+                                    particle.style.animationDelay = collectionDelay + 's';
+                                    
+                                    // Create a brief settling animation at the correct height
+                                    particle.animate([
+                                        { 
+                                            top: `calc(${surfacePosition} - 8px)`,
+                                            opacity: 1,
+                                            transform: 'scale(1)'
+                                        },
+                                        { 
+                                            top: `calc(${surfacePosition} - 2px)`,
+                                            opacity: 0.8,
+                                            transform: 'scale(0.8)'
+                                        },
+                                        { 
+                                            top: surfacePosition,
+                                            opacity: 0.2,
+                                            transform: 'scale(0.4)'
+                                        }
+                                    ], {
+                                        duration: 600,
+                                        easing: 'ease-out',
+                                        delay: collectionDelay * 1000,
+                                        fill: 'forwards'
+                                    });
+                                });
+                            }                            // Show accumulation effect when bottom has sand
+                            if (accumulation && sandBottomHeight > 5) {
+                                // Position the accumulation line at the sand surface
+                                const sandSurfacePosition = (100 - sandBottomHeight) + '%';
+                                accumulation.style.top = `calc(${sandSurfacePosition} - 1px)`;
+                                accumulation.style.display = 'block';
+                                accumulation.style.animationPlayState = 'running';
+                                
+                                // Update accumulation colors
+                                accumulation.style.background = `linear-gradient(90deg, 
+                                    transparent 0%, 
+                                    ${sandColors.primary}66 20%, 
+                                    ${sandColors.secondary}99 50%, 
+                                    ${sandColors.primary}66 80%, 
+                                    transparent 100%
+                                )`;
+                            }
+                            
+                            // Enable impact effect with intensity
+                            sandBottom.style.setProperty('--impact-active', '1');
+                            sandBottom.style.setProperty('--impact-intensity', streamIntensity.toString());
+                              } else {
+                            // No sand left - stop all effects
+                            sandStream.style.opacity = '0.1';
+                            sandParticles.forEach(particle => {
+                                // Stop any running JavaScript animations
+                                const animations = particle.getAnimations();
+                                animations.forEach(animation => animation.cancel());
+                                particle.style.animationPlayState = 'paused';
+                                particle.style.display = 'none';
+                            });
+                            
+                            // Stop collection effects when no sand is flowing
+                            if (collectionParticles) {
+                                collectionParticles.forEach(particle => {
+                                    particle.style.animationPlayState = 'paused';
+                                    particle.style.display = 'none';
+                                });
+                            }
+                            
+                            // Hide accumulation effect when no sand flowing
+                            if (accumulation) {
+                                accumulation.style.animationPlayState = 'paused';
+                            }
+                            
+                            sandBottom.style.setProperty('--impact-active', '0');
+                        }
+                    }
+                    
+                    // Add subtle visual feedback for rapid time changes
+                    const timeChangeIndicator = document.querySelector('.sand-clock-frame');
+                    if (timeChangeIndicator) {
+                        // Brief highlight effect when sand levels change significantly
+                        const lastProgress = parseFloat(timeChangeIndicator.dataset.lastProgress || '0');
+                        const progressDiff = Math.abs(progressPercent - lastProgress);
+                        
+                        if (progressDiff > 0.1) { // Significant change
+                            timeChangeIndicator.style.boxShadow = `
+                                0 15px 50px rgba(0, 0, 0, 0.3),
+                                inset 0 3px 0 rgba(255, 255, 255, 0.5),
+                                inset 0 -3px 0 rgba(0, 0, 0, 0.2),
+                                0 0 20px rgba(251, 191, 36, 0.4)
+                            `;
+                            
+                            setTimeout(() => {
+                                timeChangeIndicator.style.boxShadow = `
+                                    0 15px 50px rgba(0, 0, 0, 0.3),
+                                    inset 0 3px 0 rgba(255, 255, 255, 0.5),
+                                    inset 0 -3px 0 rgba(0, 0, 0, 0.2)
+                                `;
+                            }, 300);
+                        }
+                        
+                        timeChangeIndicator.dataset.lastProgress = progressPercent.toString();
+                    }
+                }
+            }
+        }
+
+        // Backup initialization
+        window.addEventListener('load', function() {
+            console.log('Window loaded');
+            if (!document.querySelector('#candidateTable tbody').hasChildNodes()) {
+                renderTable();
+                updateDashboard();
+                setupEventListeners();
+                loadTheme();
+            }
+        });
+
+        // Event listeners setup
+        function setupEventListeners() {            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            
+            // Table sorting
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.addEventListener('click', () => handleSort(th.dataset.sort));
+            });
+
+            // Status change listener to show/hide company and project fields
+            document.getElementById('modalStatus').addEventListener('change', handleStatusChange);
+
+            // Close modal on outside click
+            document.getElementById('candidateModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Upload modal outside click
+            document.getElementById('uploadModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeUploadModal();
+                }
+            });
+
+            // Drag and drop functionality
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    validateAndDisplayFile(files[0]);                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', handleKeyboard);
+        }
+
+        // Render the candidate table
+        function renderTable(data = candidates) {
+            const tbody = document.getElementById('candidateTableBody');
+            
+            // Safety check to ensure the table body element exists
+            if (!tbody) {
+                console.error('Table body element not found. Retrying in 100ms...');
+                setTimeout(() => renderTable(data), 100);
+                return;
+            }
+            
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                // Show empty state message
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" style="text-align: center; padding: 2rem; color: rgba(255, 255, 255, 0.6);">                            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">No candidates found</div>
+                            <div style="font-size: 0.9rem;">Click "Add Candidate" to add your first candidate</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                data.forEach(candidate => {
+                    const row = createTableRow(candidate);
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Refresh calendar to show updated events
+            if (typeof renderCalendar !== 'undefined') {
+                renderCalendar();
+            }
+            
+            // Refresh upcoming interviews
+            if (typeof displayUpcomingInterviews !== 'undefined') {
+                displayUpcomingInterviews();
+            }
+        }
+
+        // Handle status change to show/hide company and project fields
+        function handleStatusChange() {
+            const status = document.getElementById('modalStatus').value;
+            const companyGroup = document.getElementById('modalCompany').closest('.form-group');
+            const projectGroup = document.getElementById('modalProject').closest('.form-group');
+            const companyInput = document.getElementById('modalCompany');
+            const projectInput = document.getElementById('modalProject');
+            
+            if (status === 'Working') {
+                companyGroup.style.display = 'block';
+                projectGroup.style.display = 'block';
+                companyInput.setAttribute('required', 'required');
+            } else {
+                companyGroup.style.display = 'none';
+                projectGroup.style.display = 'none';
+                companyInput.removeAttribute('required');
+                // Clear the values when hidden
+                companyInput.value = '';
+                projectInput.value = '';
+            }
+        }
+
+        // Create a table row for a candidate
+        function createTableRow(candidate) {
+            const row = document.createElement('tr');
+            row.className = `status-${candidate.status.toLowerCase()}`;
+            row.setAttribute('data-candidate-id', candidate.id);
+            row.innerHTML = `
+                <td>
+                    <a href="#" class="candidate-name" onclick="openCandidateModal(${candidate.id})" tabindex="0">
+                        ${candidate.name}
+                    </a>
+                </td>                <td>
+                    <span class="status-badge status-${candidate.status.toLowerCase()}">${candidate.status}</span>
+                </td>                <td>                    ${['idle', 'training'].includes(candidate.status.toLowerCase()) ? 'N/A' : 
+                        (candidate.document && candidate.document.trim() !== '') ?
+                        `<a href="#" class="document-link" onclick="viewDocument('${candidate.document}')" tabindex="0">
+                            ${candidate.document}
+                        </a>` : ''
+                    }
+                </td><td>
+                    ${['idle', 'training', 'scheduling', 'working'].includes(candidate.status.toLowerCase()) ? 'N/A' : formatDateTime(candidate.interview)}
+                </td>
+                <td>
+                    ${candidate.status.toLowerCase() === 'working' ? candidate.company : 'N/A'}
+                </td>
+                <td>
+                    ${candidate.status.toLowerCase() === 'working' ? candidate.project : 'N/A'}
+                </td>
+                <td>${candidate.status.toLowerCase() === 'working' ? formatDate(candidate.date) : 'N/A'}</td><td>
+                    <div class="blockers">
+                        ${candidate.blockers && candidate.blockers.length > 0 
+                            ? candidate.blockers.map(blocker => `<span class="blocker-tag">${getBlockerShortForm(blocker)}</span>`).join('') 
+                            : '<span class="no-blockers">None</span>'
+                        }
+                    </div>
+                </td>
+                <td>
+                    ${candidate.remarks}
+                </td>                <td>                    <div class="contact-icons">                        <a href="mailto:${candidate.email}" class="contact-icon email" title="Send Email" tabindex="0">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </a>
+                        <a href="https://wa.me/${candidate.phone?.replace(/[^\d]/g, '')}" target="_blank" class="contact-icon whatsapp" title="WhatsApp" tabindex="0">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.484 3.488"/>
+                            </svg>                        </a>
+                        <a href="#" class="contact-icon link" title="Share Candidate Link" onclick="shareCandidateLink(${candidate.id})" tabindex="0">
+                            🔗
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editRow(${candidate.id})" title="Edit Candidate" tabindex="0">
+                            ✏️
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteCandidate(${candidate.id})" title="Delete Candidate" tabindex="0">
+                            🗑️
+                        </button>
+                    </div>
+                </td>
+            `;
+            return row;
+        }
+
+        // Handle search functionality
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredCandidates = candidates.filter(candidate => {
+                return Object.values(candidate).some(value => 
+                    value.toString().toLowerCase().includes(searchTerm)
+                );
+            });
+            renderTable(filteredCandidates);
+        }
+
+        // Handle table sorting
+        function handleSort(column) {
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'asc';
+            }
+
+            // Update sort indicators
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            const sortedHeader = document.querySelector(`th[data-sort="${column}"]`);
+            sortedHeader.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');            // Sort the data
+            candidates.sort((a, b) => {
+                let aValue = a[column];
+                let bValue = b[column];
+
+                if (typeof aValue === 'string') {
+                    aValue = aValue.toLowerCase();
+                    bValue = bValue.toLowerCase();
+                }
+
+                if (currentSortDirection === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+
+            renderTable();
+        }
+
+        // Inline cell editing (disabled - only row editing allowed)
+        function editCell(cell, candidateId, field) {
+            // Inline editing is disabled - use Edit button for row editing
+            showToast('Use the Edit button to modify candidate information', 'warning');
+            return;
+        }
+
+        // Save inline edit (disabled)
+        function saveEdit(candidateId, field, newValue) {
+            // Inline editing is disabled
+            return;
+        }
+
+        // Cancel inline edit (disabled)
+        function cancelEdit(cell, originalValue) {
+            // Inline editing is disabled
+            return;
+        }
+
+        // Update candidate status (now only used in row editing)
+        function updateStatus(candidateId, newStatus) {
+            // Status updates now only happen through row editing
+            showToast('Use the Edit button to change candidate status', 'warning');
+            return;
+        }
+
+        // Update any field (now only used in row editing)
+        function updateField(candidateId, field, value) {
+            // Field updates now only happen through row editing
+            showToast('Use the Edit button to modify candidate information', 'warning');
+            return;
+        }
+
+        // Handle modal form submission
+        function handleModalSubmit(e) {
+            e.preventDefault();
+            console.log('handleModalSubmit called');
+            console.log('Event target:', e.target);
+            console.log('Form element:', document.getElementById('candidateForm'));
+            
+            const candidateIdData = e.target.dataset.candidateId;
+            console.log('candidateIdData:', candidateIdData);
+            
+            // If candidateIdData is undefined, check if we're adding a new candidate
+            if (!candidateIdData || candidateIdData === 'new') {
+                console.log('Creating new candidate');
+                try {
+                    // Create new candidate
+                    const status = document.getElementById('modalStatus').value;
+                    const candidateId = candidates.length > 0 ? Math.max(...candidates.map(c => c.id)) + 1 : 1;
+                    const email = document.getElementById('modalEmail').value;
+                    const name = document.getElementById('modalName').value;
+                    
+                    console.log('Form data:', { name, email, status });
+                    console.log('New candidate ID will be:', candidateId);
+                    
+                    if (!name || !email) {
+                        showToast('Name and email are required', 'error');
+                        return false;
+                    }
+                    
+                    const newCandidate = {
+                    id: candidateId,
+                    name: name,
+                    email: email,
+                    phone: document.getElementById('modalPhone').value,
+                    document: "", // Empty document initially
+                    company: status === 'Working' ? document.getElementById('modalCompany').value : '',
+                    status: status,
+                    project: status === 'Working' ? document.getElementById('modalProject').value : '',
+                    interview: "", // Empty interview initially
+                    interviewType: "", // Empty interview type initially
+                    date: "", // Empty date initially
+                    blockers: [],
+                    remarks: getRemarksByStatus(status),
+                    uniqueLink: generatePermanentLink(candidateId, email)                    };
+                    
+                    console.log('New candidate object:', newCandidate);
+                    
+                    candidates.push(newCandidate);
+                
+                // Log the addition to history
+                logChange('Added', newCandidate.name, `New candidate added with status: ${status}, Email: ${email}, Phone: ${phone}`);
+                
+                console.log('Candidates array after push:', candidates.length);
+                console.log('Full candidates array:', candidates);
+                
+                // Try to update UI components with safety checks
+                try {
+                    if (document.getElementById('candidateTableBody')) {
+                        renderTable();
+                    }
+                } catch (e) {
+                    console.warn('Could not update table:', e.message);
+                }
+                
+                try {
+                    if (document.getElementById('statsGrid')) {
+                        updateDashboard();
+                    }
+                } catch (e) {
+                    console.warn('Could not update dashboard:', e.message);
+                }
+                
+                closeModal();
+                showToast('New candidate added successfully', 'success');
+                
+                console.log('New candidate added successfully');
+                } catch (error) {
+                    console.error('Error creating new candidate:', error);
+                    showToast('Error adding candidate: ' + error.message, 'error');
+                }
+            } else {
+                console.log('Updating existing candidate');
+                // Update existing candidate                const candidateId = parseInt(candidateIdData);
+                const candidate = candidates.find(c => c.id === candidateId);
+                
+                if (candidate) {
+                    const status = document.getElementById('modalStatus').value;
+                    
+                    candidate.name = document.getElementById('modalName').value;
+                    candidate.email = document.getElementById('modalEmail').value;
+                    candidate.phone = document.getElementById('modalPhone').value;
+                    candidate.company = status === 'Working' ? document.getElementById('modalCompany').value : '';
+                    candidate.project = status === 'Working' ? document.getElementById('modalProject').value : '';
+                    candidate.status = status;
+                    candidate.remarks = getRemarksByStatus(status);
+                      renderTable();
+                    updateDashboard();
+                    closeModal();
+                    showToast('Candidate updated successfully', 'success');
+                }
+            }
+            return false;
+        }
+
+        // Helper function to get remarks based on status
+        function getRemarksByStatus(status) {
+            switch(status) {
+                case 'Interview':
+                    return 'Awaiting Interview';
+                case 'Scheduling':
+                    return 'Scheduling Interview';
+                case 'L2':
+                    return 'L2 Interview Scheduled';
+                case 'L3':
+                    return 'L3 Interview Scheduled';
+                case 'Training':
+                    return 'Pending Schedule';
+                case 'Working':
+                    return 'Active Employee';
+                case 'Idle':
+                    return 'Currently Idle';
+                default:
+                    return 'Awaiting Interview';
+            }
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('candidateModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Row editing functionality
+        // Function to convert blocker names to short forms
+        function getBlockerShortForm(blocker) {
+            const shortForms = {
+                'Waiting for equipment': 'Equipment',
+                'Visa processing': 'Visa',
+                'Background check pending': 'BGCheck',
+                'Waiting for client approval': 'Approval',
+                'Documentation incomplete': 'Docs',
+                'Training pending': 'Training',
+                'System access issues': 'Access',
+                'Medical clearance': 'Medical',
+                'Reference verification': 'Reference',
+                'Contract negotiation': 'Contract'
+            };
+            return shortForms[blocker] || blocker;
+        }
+
+        function editRow(candidateId) {
+            // Cancel any existing edits
+            if (currentEditingRow) {
+                cancelRowEdit();
+            }
+
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) return;
+
+            const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
+            if (!row) return;
+
+            currentEditingRow = candidateId;
+            row.classList.add('row-editing');
+              // Replace cells with input fields
+            const cells = row.querySelectorAll('td');
+            
+            // Name (index 0)
+            cells[0].innerHTML = `<input type="text" class="edit-input" value="${candidate.name}" data-field="name">`;              // Status (index 1) - keep dropdown but make it editable
+            cells[1].innerHTML = `
+                <select class="status-select edit-input" data-field="status" style="width: 100%;" onchange="handleStatusChangeInEdit(${candidateId}, this.value)">
+                    <option value="Idle" ${candidate.status === 'Idle' ? 'selected' : ''}>Idle</option>
+                    <option value="Training" ${candidate.status === 'Training' ? 'selected' : ''}>Training</option>
+                    <option value="Scheduling" ${candidate.status === 'Scheduling' ? 'selected' : ''}>Scheduling</option>
+                    <option value="Interview" ${candidate.status === 'Interview' ? 'selected' : ''}>Interview</option>
+                    <option value="L2" ${candidate.status === 'L2' ? 'selected' : ''}>L2</option>
+                    <option value="L3" ${candidate.status === 'L3' ? 'selected' : ''}>L3</option>
+                    <option value="Working" ${candidate.status === 'Working' ? 'selected' : ''}>Working</option>                </select>
+            `;
+            // Document (index 2) - editable when Scheduling, Interview, L2, L3, or Working
+            if (['Scheduling', 'Interview', 'L2', 'L3', 'Working'].includes(candidate.status)) {
+                cells[2].innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                        <input type="file" class="file-input" id="fileInput_${candidateId}" accept=".pdf" onchange="handleRowFileSelect(event, ${candidateId})" style="display: none;" />
+                        <button type="button" class="btn-upload" onclick="document.getElementById('fileInput_${candidateId}').click()" title="Upload Document" style="
+                            background: rgba(59, 130, 246, 0.2);
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 6px;
+                            color: #3b82f6;
+                            padding: 8px 12px;
+                            font-size: 16px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            min-width: 40px;
+                            height: 32px;
+                        " onmouseover="this.style.background='rgba(59, 130, 246, 0.3)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.2)'">
+                            📎
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Show N/A for Idle and Training
+                cells[2].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Interview (index 3) - editable when Interview, L2, L3, but NOT when Working
+            if (['Interview', 'L2', 'L3'].includes(candidate.status)) {
+                cells[3].innerHTML = `<input type="datetime-local" class="edit-input date-input" value="${candidate.interview}" data-field="interview" style="width: 100%;">`;
+            } else {
+                // Show N/A for Idle, Training, Scheduling, and Working
+                cells[3].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Company (index 4) - only editable when Working
+            if (candidate.status === 'Working') {
+                cells[4].innerHTML = `<input type="text" class="edit-input" value="${candidate.company}" data-field="company">`;
+            } else {
+                // Show N/A for all other statuses
+                cells[4].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Project (index 5) - only editable when Working
+            if (candidate.status === 'Working') {
+                cells[5].innerHTML = `<input type="text" class="edit-input" value="${candidate.project}" data-field="project">`;
+            } else {
+                // Show N/A for all other statuses
+                cells[5].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Date (index 6) - only editable when Working
+            if (candidate.status === 'Working') {
+                cells[6].innerHTML = `<input type="date" class="edit-input date-input" value="${candidate.date}" data-field="date" style="width: 100%;">`;
+            } else {
+                // Show N/A for all other statuses
+                cells[6].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Blockers (index 7) - only editable when status is Idle
+            if (candidate.status === 'Idle') {
+                const blockersOptions = [
+                    'None',
+                    'Waiting for equipment',
+                    'Visa processing',
+                    'Background check pending',
+                    'Waiting for client approval',
+                    'Documentation incomplete',
+                    'Training pending',
+                    'System access issues',
+                    'Medical clearance',
+                    'Reference verification',
+                    'Contract negotiation'
+                ];
+                
+                // Get the first blocker or 'None' if no blockers
+                const currentBlocker = candidate.blockers && candidate.blockers.length > 0 ? candidate.blockers[0] : 'None';
+                
+                const selectOptions = blockersOptions.map(option => 
+                    `<option value="${option}" ${currentBlocker === option ? 'selected' : ''}>${option === 'None' ? 'None' : getBlockerShortForm(option)}</option>`
+                ).join('');
+                
+                cells[7].innerHTML = `<select class="status-select edit-input" data-field="blockers" style="width: 100%;">${selectOptions}</select>`;
+            } else {
+                // Show short forms in non-edit mode
+                const shortBlockers = candidate.blockers && candidate.blockers.length > 0 
+                    ? candidate.blockers.map(blocker => getBlockerShortForm(blocker))
+                    : [];
+                cells[7].innerHTML = `
+                    <div class="blockers">
+                        ${shortBlockers.length > 0 
+                            ? shortBlockers.map(blocker => `<span class="blocker-tag">${blocker}</span>`).join('') 
+                            : '<span class="no-blockers">None</span>'
+                        }
+                    </div>
+                `;
+            }// Remarks (index 8) - read-only, auto-updates based on status
+            cells[8].innerHTML = `
+                <span style="color: white; font-size: 0.8rem;">${candidate.remarks}</span>
+            `;
+            
+            // Contact (index 9) - Email and Phone
+            cells[9].innerHTML = `
+                <input type="email" class="edit-input" value="${candidate.email}" data-field="email" placeholder="Email" style="margin-bottom: 0.25rem;">
+                <input type="tel" class="edit-input" value="${candidate.phone}" data-field="phone" placeholder="Phone">            `;
+            
+            // Actions (index 10)
+            cells[10].innerHTML = `
+                <div class="edit-actions">
+                    <button class="btn btn-primary" onclick="saveRowEdit(${candidateId})" title="Save Changes">
+                        💾 Save
+                    </button>
+                    <button class="btn btn-secondary" onclick="cancelRowEdit()" title="Cancel Edit">
+                        ❌ Cancel
+                    </button>
+                </div>
+            `;
+
+            // Focus on the first input
+            const firstInput = cells[0].querySelector('input');
+            if (firstInput) {
+                firstInput.focus();
+                firstInput.select();
+            }
+        }
+
+        function saveRowEdit(candidateId) {
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) return;
+
+            const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
+            if (!row) return;            // Collect all the edited values
+            const inputs = row.querySelectorAll('.edit-input');
+            const newData = {};            inputs.forEach(input => {
+                const field = input.dataset.field;
+                if (field) {
+                    if (field === 'blockers') {
+                        // Handle blockers as single selection dropdown
+                        if (input.tagName.toLowerCase() === 'select') {
+                            const selectedValue = input.value;
+                            if (selectedValue === 'None') {
+                                newData[field] = [];
+                            } else {
+                                newData[field] = [selectedValue];
+                            }
+                        }
+                    } else {
+                        newData[field] = input.value;
+                    }
+                }
+            });
+
+            // If status changed from Idle to something else, clear blockers
+            if (newData.status && newData.status !== 'Idle' && candidate.status === 'Idle') {
+                newData.blockers = [];
+            }
+
+            // Check for new document upload
+            const documentNameSpan = row.querySelector('.document-name');
+            if (documentNameSpan && documentNameSpan.getAttribute('data-new-document')) {
+                newData.document = documentNameSpan.getAttribute('data-new-document');
+            }            // Validate required fields based on current status
+            if (!newData.name) {
+                showToast('Please fill in the candidate name', 'error');
+                return;
+            }
+
+            // Status-specific validation (only check fields that are editable for current status)
+            const currentStatus = newData.status || candidate.status;
+            
+            switch(currentStatus) {
+                case 'Interview':
+                    // No additional required fields for Interview status
+                    break;
+                case 'Scheduling':
+                    // No additional required fields for Scheduling status
+                    break;
+                case 'Training':
+                    // No additional required fields for Training status
+                    break;
+                case 'Working':
+                    // Only validate company when Working (since it's editable)
+                    if (!newData.company) {
+                        showToast('Please fill in the company name', 'error');
+                        return;
+                    }
+                    break;
+                case 'Idle':
+                    // No additional required fields for Idle status
+                    break;
+            }
+
+            // Update candidate data
+            Object.assign(candidate, newData);            // Auto-update remarks based on status if status changed
+            if (newData.status) {
+                switch(newData.status) {
+                    case 'Interview':
+                        candidate.remarks = 'Awaiting Interview';
+                        break;
+                    case 'Scheduling':
+                        candidate.remarks = 'Scheduling Interview';
+                        break;
+                    case 'Training':
+                        candidate.remarks = 'Pending Schedule';
+                        break;
+                    case 'Working':
+                        candidate.remarks = 'Active Employee';
+                        break;
+                    case 'Idle':
+                        candidate.remarks = 'Currently Idle';
+                        break;
+                }
+            }
+
+            // Reset editing state
+            currentEditingRow = null;
+            
+            // Re-render the table
+            renderTable();
+            updateDashboard();
+            showToast('Candidate updated successfully', 'success');
+        }
+
+        function cancelRowEdit() {
+            if (currentEditingRow) {
+                currentEditingRow = null;
+                renderTable(); // Re-render to restore original state
+            }
+        }
+
+        // Delete candidate
+        function deleteCandidate(candidateId) {                if (confirm('Are you sure you want to delete this candidate?')) {
+                    candidates = candidates.filter(c => c.id !== candidateId);
+                    renderTable();
+                    updateDashboard();
+                    showToast('Candidate deleted successfully', 'success');
+                }
+            }
+            
+            // Generate a permanent unique link for a candidate
+        function generatePermanentLink(candidateId, email) {
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substr(2, 9);
+            const uniqueString = `${candidateId}-${email}-${timestamp}-${random}`;
+            const token = btoa(uniqueString).replace(/[^a-zA-Z0-9]/g, '').substr(0, 32);
+            
+            const baseUrl = window.location.origin + window.location.pathname;
+            const uniqueId = `${candidateId}_${timestamp}_${random}`;
+            const permanentLink = `${baseUrl}?candidate=${uniqueId}&token=${token}&access=${btoa(email).replace(/[^a-zA-Z0-9]/g, '')}`;
+            
+            return permanentLink;        }
+
+        // Share candidate link for individual access
+        function shareCandidateLink(candidateId) {
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) return;
+            
+            // Use the stored permanent link, or generate one if it doesn't exist (for existing data)
+            let shareableLink = candidate.uniqueLink;
+            if (!shareableLink) {
+                shareableLink = generatePermanentLink(candidateId, candidate.email);
+                candidate.uniqueLink = shareableLink; // Store it for future use
+            }
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(shareableLink).then(() => {
+                showToast(`Permanent link copied for ${candidate.name}!`, 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = shareableLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast(`Permanent link copied for ${candidate.name}!`, 'success');
+            });
+        }
+
+        // Contact candidate
+        function contactCandidate(type, contact) {
+            if (type === 'email') {
+                window.open(`mailto:${contact}`, '_blank');
+            } else if (type === 'whatsapp') {
+                window.open(`https://wa.me/${contact.replace(/[^0-9]/g, '')}`, '_blank');
+            }
+        }
+        
+        // View document
+        function viewDocument(documentName) {
+            showToast(`Opening ${documentName}...`, 'success');
+            // In a real application, this would open the actual document
+        }
+        
+        function handleRowFileSelect(event, candidateId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            if (file.type !== 'application/pdf') {
+                showToast('Please select a PDF file only', 'error');
+                event.target.value = ''; // Clear the input
+                return;
+            }
+
+            // Validate file size (10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            if (file.size > maxSize) {
+                showToast('File size must be less than 10MB', 'error');
+                event.target.value = ''; // Clear the input
+                return;
+            }
+
+            // Update the document name display
+            const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
+            const documentNameSpan = row.querySelector('.document-name');
+            if (documentNameSpan) {
+                documentNameSpan.textContent = file.name;
+                documentNameSpan.setAttribute('data-new-document', file.name); // Store for saving
+            }
+            
+            showToast(`File selected: ${file.name} (${formatFileSize(file.size)})`, 'success');
+        }
+        
+        function handleStatusChangeInEdit(candidateId, newStatus) {
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) return;
+
+            // Temporarily update candidate status for field display logic
+            const originalStatus = candidate.status;
+            candidate.status = newStatus;
+
+            const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
+            const cells = row.querySelectorAll('td');
+
+            // Update remarks based on new status
+            let newRemarks;
+            switch(newStatus) {
+                case 'Interview':
+                    newRemarks = 'Awaiting Interview';
+                    break;
+                case 'Scheduling':
+                    newRemarks = 'Scheduling Interview';
+                    break;
+                case 'Training':
+                    newRemarks = 'Pending Schedule';
+                    break;
+                case 'Working':
+                    newRemarks = 'Active Employee';
+                    break;
+                case 'Idle':
+                    newRemarks = 'Currently Idle';
+                    break;
+                case 'L2':
+                    newRemarks = 'L2 Interview Scheduled';
+                    break;                case 'L3':
+                    newRemarks = 'L3 Interview Scheduled';
+                    break;
+                default:
+                    newRemarks = candidate.remarks;
+            }
+
+            // Document (index 2) - editable when Scheduling, Interview, L2, L3, or Working
+            if (['Scheduling', 'Interview', 'L2', 'L3', 'Working'].includes(newStatus)) {
+                cells[2].innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                        <input type="file" class="file-input" id="fileInput_${candidateId}" accept=".pdf" onchange="handleRowFileSelect(event, ${candidateId})" style="display: none;" />
+                        <button type="button" class="btn-upload" onclick="document.getElementById('fileInput_${candidateId}').click()" title="Upload Document" style="
+                            background: rgba(59, 130, 246, 0.2);
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 6px;
+                            color: #3b82f6;
+                            padding: 8px 12px;
+                            font-size: 16px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            min-width: 40px;
+                            height: 32px;
+                        " onmouseover="this.style.background='rgba(59, 130, 246, 0.3)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.2)'">
+                            📎
+                        </button>
+                    </div>
+                `;
+            } else {
+                cells[2].innerHTML = `                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+            
+            // Interview (index 3) - editable when Interview, L2, L3, but NOT when Working
+            if (['Interview', 'L2', 'L3'].includes(newStatus)) {
+                cells[3].innerHTML = `<input type="datetime-local" class="edit-input date-input" value="${candidate.interview}" data-field="interview" style="width: 100%;">`;
+            } else {
+                cells[3].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Company (index 4) - only editable when Working
+            if (newStatus === 'Working') {
+                cells[4].innerHTML = `<input type="text" class="edit-input" value="${candidate.company}" data-field="company">`;
+            } else {
+                cells[4].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Project (index 5) - only editable when Working
+            if (newStatus === 'Working') {
+                cells[5].innerHTML = `<input type="text" class="edit-input" value="${candidate.project}" data-field="project">`;
+            } else {
+                cells[5].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+
+            // Date (index 6) - only editable when Working
+            if (newStatus === 'Working') {
+                cells[6].innerHTML = `<input type="date" class="edit-input date-input" value="${candidate.date}" data-field="date" style="width: 100%;">`;            } else {
+                cells[6].innerHTML = `
+                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
+                `;
+            }
+            
+            // Blockers (index 7) - only editable when Idle
+            if (newStatus === 'Idle') {
+                const blockersOptions = [
+                        'None',
+                        'Waiting for equipment',
+                        'Visa processing',
+                        'Background check pending',
+                        'Waiting for client approval',
+                        'Documentation incomplete',
+                        'Training pending',
+                        'System access issues',
+                        'Medical clearance',
+                        'Reference verification',
+                        'Contract negotiation'
+                    ];
+                    
+                    const currentBlocker = candidate.blockers && candidate.blockers.length > 0 ? candidate.blockers[0] : 'None';
+                    const selectOptions = blockersOptions.map(option => 
+                        `<option value="${option}" ${currentBlocker === option ? 'selected' : ''}>${option === 'None' ? 'None' : getBlockerShortForm(option)}</option>`
+                    ).join('');
+                    
+                    cells[7].innerHTML = `<select class="status-select edit-input" data-field="blockers" style="width: 100%;">${selectOptions}</select>`;
+            } else {
+                cells[7].innerHTML = `
+                    <div class="blockers">
+                        ${candidate.blockers && candidate.blockers.length > 0 
+                            ? candidate.blockers.map(blocker => `<span class="blocker-tag">${getBlockerShortForm(blocker)}</span>`).join('') 
+                            : '<span class="no-blockers">None</span>'
+                        }
+                    </div>
+                `;
+            }
+
+            // Remarks (index 8) - always read-only, auto-updated
+            cells[8].innerHTML = `
+                <span style="color: white; font-size: 0.8rem;">${newRemarks}</span>
+            `;
+            
+            // Restore original status (this is just for display, actual save will update it)
+            candidate.status = originalStatus;
+        }
+
+        // Document upload functionality (now integrated with row editing)
+        function uploadDocument(candidateId) {
+            currentUploadCandidateId = candidateId;
+            const candidate = candidates.find(c => c.id === candidateId);
+            document.querySelector('#uploadModal .modal-title').textContent = `Upload Document for ${candidate.name}`;
+            document.getElementById('uploadModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetUploadForm();
+        }
+
+        function resetUploadForm() {
+            selectedFile = null;
+            currentUploadCandidateId = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('uploadBtn').disabled = true;
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                validateAndDisplayFile(file);
+            }
+        }
+
+        function validateAndDisplayFile(file) {
+            // Validate file type
+            if (file.type !== 'application/pdf') {
+                showToast('Please select a PDF file only', 'error');
+                return;
+            }
+
+            // Validate file size (10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            if (file.size > maxSize) {
+                showToast('File size must be less than 10MB', 'error');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Display file info
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = `Size: ${formatFileSize(file.size)}`;
+            document.getElementById('fileInfo').style.display = 'block';
+            document.getElementById('uploadBtn').disabled = false;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function uploadFile() {
+            if (!selectedFile || !currentUploadCandidateId) {
+                showToast('Please select a file first', 'error');
+                return;
+            }
+
+            const candidate = candidates.find(c => c.id === currentUploadCandidateId);
+            if (!candidate) {
+                showToast('Candidate not found', 'error');
+                return;
+            }
+
+            // Simulate file upload (in real app, this would upload to server)
+            showToast('Uploading document...', 'info');
+            
+            setTimeout(() => {
+                // Update candidate document name
+                candidate.document = selectedFile.name;
+                
+                // In a real application, you would:
+                // 1. Upload file to server/cloud storage
+                // 2. Get the file URL/path
+                // 3. Store the URL in candidate data
+                // 4. Handle upload progress and errors
+                
+                renderTable();
+                closeUploadModal();
+                showToast(`Document "${selectedFile.name}" uploaded successfully!`, 'success');
+            }, 1500);
+        }
+
+        // Update dashboard statistics
+        function updateDashboard() {
+            const stats = {
+                total: candidates.length,
+                interview: candidates.filter(c => c.status === 'Interview').length,
+                scheduling: candidates.filter(c => c.status === 'Scheduling').length,
+                training: candidates.filter(c => c.status === 'Training').length,
+                working: candidates.filter(c => c.status === 'Working').length,
+                idle: candidates.filter(c => c.status === 'Idle').length,
+                blockers: candidates.filter(c => c.blockers.length > 0).length
+            };
+
+            const statsGrid = document.getElementById('statsGrid');
+            
+            // Safety check to ensure the stats grid element exists
+            if (!statsGrid) {
+                console.warn('Stats grid element not found, skipping dashboard update');
+                return;
+            }
+            
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.total}</div>
+                    <div class="stat-label">Total Candidates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.interview}</div>
+                    <div class="stat-label">Interview Stage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.scheduling}</div>
+                    <div class="stat-label">Scheduling</div>                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.training}</div>
+                    <div class="stat-label">In Training</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.working}</div>
+                    <div class="stat-label">Working</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.idle}</div>
+                    <div class="stat-label">Idle</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.blockers}</div>
+                    <div class="stat-label">With Blockers</div>
+                </div>            `;
+        }
+        
+        // Export data functionality - Excel format
+        function exportData() {
+            // Prepare data for Excel export
+            const exportData = candidates.map(candidate => {
+                return {
+                    'Name': candidate.name,
+                    'Status': candidate.status,
+                    'Document': candidate.document || 'No document',
+                    'Interview': candidate.interview ? formatDateTime(candidate.interview) : 'N/A',
+                    'Company': candidate.company || 'N/A',
+                    'Project': candidate.project || 'N/A',
+                    'Date': candidate.date ? formatDate(candidate.date) : 'N/A',
+                    'Blockers': candidate.blockers && candidate.blockers.length > 0 ? 
+                        candidate.blockers.join(', ') : 'None',
+                    'Remarks': candidate.remarks || '',
+                    'Email': candidate.email || '',
+                    'Phone': candidate.phone || ''
+                };
+            });
+
+            // Create Excel workbook using SheetJS
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Candidates");
+
+            // Set column widths for better readability
+            const colWidths = [
+                {wch: 20}, // Name
+                {wch: 12}, // Status
+                {wch: 25}, // Document
+                {wch: 18}, // Interview
+                {wch: 15}, // Company
+                {wch: 15}, // Project
+                {wch: 12}, // Date
+                {wch: 30}, // Blockers
+                {wch: 25}, // Remarks
+                {wch: 25}, // Email
+                {wch: 15}  // Phone
+            ];
+            ws['!cols'] = colWidths;
+
+            // Generate filename with current date
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+            const filename = `Protos_Nexus_Candidates_${dateStr}.xlsx`;
+
+            // Download the Excel file
+            XLSX.writeFile(wb, filename);
+              showToast(`Excel file exported successfully: ${filename}`, 'success');
+        }
+        
+        // History tracking functionality
+        function logChange(action, candidateName, details) {
+            const timestamp = new Date().toISOString();
+            const historyEntry = {
+                id: Date.now(),
+                timestamp: timestamp,
+                action: action,
+                candidate: candidateName,
+                details: details,
+                user: sessionStorage.getItem('userEmail') || 'Unknown User'
+            };
+            
+            // Get existing history or create new array
+            let history = JSON.parse(localStorage.getItem('candidateHistory') || '[]');
+            
+            // Add new entry at the beginning
+            history.unshift(historyEntry);
+            
+            // Keep only last 1000 entries to prevent storage overflow
+            if (history.length > 1000) {
+                history = history.slice(0, 1000);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('candidateHistory', JSON.stringify(history));
+        }
+
+        // Open history page
+        function openHistoryPage() {
+            // Create history page URL with current data
+            const historyData = localStorage.getItem('candidateHistory') || '[]';
+            
+            // Open new window/tab with history page
+            const historyWindow = window.open('', '_blank');
+            
+            // Generate and write the history page content
+            historyWindow.document.write(generateHistoryPageHTML());
+            historyWindow.document.close();
+            
+            showToast('History page opened in new tab', 'success');
+        }
+
+        // Generate HTML for history page
+        function generateHistoryPageHTML() {
+            const history = JSON.parse(localStorage.getItem('candidateHistory') || '[]');
+            
+            return 
+        }
+    
+    </script>
+
+    <script>
+        // Keyboard navigation
+        function handleKeyboard(e) {
+            if (e.key === 'Escape') {
+                if (currentEditingRow) {
+                    cancelRowEdit();
+                } else {
+                    closeModal();
+                }
+            }
+            
+            // Save on Ctrl+Enter when editing a row
+            if (e.key === 'Enter' && e.ctrlKey && currentEditingRow) {
+                saveRowEdit(currentEditingRow);
+            }
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            if (!dateString || dateString.trim() === '') {
+                return 'N/A';
+            }
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'N/A';
+            }
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateTimeString) {
+            if (!dateTimeString || dateTimeString.trim() === '') {
+                return 'N/A';
+            }
+            const date = new Date(dateTimeString);
+            if (isNaN(date.getTime())) {
+                return 'N/A';
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = String(date.getFullYear()).slice(-2);
+            return day + '/' + month + '/' + year;
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Performance optimization: Debounce search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }        // Replace the search event listener with debounced version
+        document.addEventListener('DOMContentLoaded', function() {
+            const debouncedSearch = debounce(handleSearch, 300);
+            document.getElementById('searchInput').addEventListener('input', debouncedSearch);
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+            </div>            <div class="footer-center">
+                <span class="footer-brand">Protos Nexus</span>
+                <span class="footer-copyright">v1.0</span>
+            </div>
+            <div class="footer-right">
+                <span class="footer-version">© 2025</span>
+            </div>
+        </div>    </footer>
+</body>
+</html>
