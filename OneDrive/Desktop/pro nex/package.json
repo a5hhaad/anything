@@ -9,12 +9,16 @@
     "start": "echo 'Static site - no start command needed'"
   },
   "dependencies": {
-    "mongodb": "^6.0.0"
+    "mongodb": "^6.17.0"
   },
   "engines": {
     "node": "18.x"
   },
-  "keywords": ["candidate-management", "vercel", "mongodb"],
+  "keywords": [
+    "candidate-management",
+    "vercel",
+    "mongodb"
+  ],
   "author": "Your Name",
   "license": "MIT"
 }
