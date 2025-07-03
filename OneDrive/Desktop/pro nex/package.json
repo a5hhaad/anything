@@ -1,24 +1,27 @@
 {
-  "name": "candidate-management-system",
+  "name": "protosnexus-candidate-management",
   "version": "1.0.0",
-  "description": "Candidate Management System with MongoDB backend",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'No build step required'",
-    "start": "echo 'Static site - no start command needed'"
-  },
-  "dependencies": {
-    "mongodb": "^6.17.0"
+  "description": "Professional candidate management system with Neon PostgreSQL integration",
+  "main": "index.html",  "scripts": {
+    "build": "echo 'Build complete - Ready for Netlify'",
+    "start": "netlify dev"
+  },  "dependencies": {
+    "pg": "^8.11.3"
   },
   "engines": {
     "node": "18.x"
-  },
-  "keywords": [
+  },  "keywords": [
     "candidate-management",
-    "vercel",
-    "mongodb"
+    "neon-db",
+    "postgresql",
+    "netlify",
+    "recruitment",
+    "protos-nexus"
   ],
-  "author": "Your Name",
-  "license": "MIT"
+  "author": "MD Ashhaad Sadique",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a5hhaad/protosnexus.git"
+  }
 }

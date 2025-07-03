@@ -1,0 +1,52 @@
+[build]
+  publish = "."
+  command = "echo 'Build complete'"
+
+[functions]
+  directory = "api"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+# Clean URL redirects - redirect .html to clean URLs
+[[redirects]]
+  from = "/login.html"
+  to = "/login"
+  status = 301
+
+[[redirects]]
+  from = "/candidate-management.html"
+  to = "/candidate-management"
+  status = 301
+
+[[redirects]]
+  from = "/history.html"
+  to = "/history"
+  status = 301
+
+# Clean URL rewrites - serve .html files for clean URLs
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/candidate-management"
+  to = "/candidate-management.html"
+  status = 200
+
+[[redirects]]
+  from = "/history"
+  to = "/history.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "18"

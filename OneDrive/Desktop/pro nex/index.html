@@ -3,21 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protos Nexus</title>
+    <title>Protos Nexus - Redirecting...</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            /* Global scrollbar hiding */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Internet Explorer 10+ */
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-
-        /* Hide scrollbars for WebKit browsers (Chrome, Safari, Edge) */
-        *::-webkit-scrollbar {
-            display: none;
+        .loading {
+            text-align: center;
         }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <h2>Redirecting to login...</h2>
+    </div>    <script>
+        // Immediate redirect to login page
+        window.location.href = '/login';
+    </script>
+</body>
+</html>
 
         /* Ensure html and body also hide scrollbars */
         html, body {
@@ -1991,7 +2017,7 @@
             <button class="btn btn-secondary" onclick="exportData()">
                 📊 Export to Excel
             </button>
-            <button class="btn btn-secondary" onclick="window.open('history.html', '_blank')">
+            <button class="btn btn-secondary" onclick="window.open('/history', '_blank')">
                 📋 History
             </button>
         </div>
@@ -2584,10 +2610,9 @@
             const now = new Date();
             const timeElement = document.getElementById('currentTime');
             
-            if (timeElement) {
-                // Update time display
+            if (timeElement) {                // Update time display
                 const timeString = now.toLocaleTimeString('en-US', { 
-                    hour12: false,
+                    hour12: true,
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit'
@@ -3617,19 +3642,20 @@
                 showToast('Candidate deleted successfully', 'success');
             }
         }
-        
-        // Generate a permanent unique link for a candidate
+          // Generate a short permanent unique link for a candidate
         function generatePermanentLink(candidateId, email) {
-            const timestamp = Date.now();
-            const random = Math.random().toString(36).substr(2, 9);
-            const uniqueString = `${candidateId}-${email}-${timestamp}-${random}`;
-            const token = btoa(uniqueString).replace(/[^a-zA-Z0-9]/g, '').substr(0, 32);
+            // Create a much shorter, cleaner link
+            const shortId = candidateId.toString().substr(-6); // Last 6 digits of ID
+            const emailHash = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substr(0, 4); // First 4 chars of email hash
+            const timestamp = Date.now().toString(36); // Base36 timestamp for shorter string
+            
+            // Create a short token combining these elements
+            const shortToken = `${shortId}${emailHash}${timestamp}`.substr(0, 12);
             
             const baseUrl = window.location.origin + window.location.pathname;
-            const uniqueId = `${candidateId}_${timestamp}_${random}`;
-            const permanentLink = `${baseUrl}?candidate=${uniqueId}&token=${token}&access=${btoa(email).replace(/[^a-zA-Z0-9]/g, '')}`;
-            
-            return permanentLink;        }
+            const shortLink = `${baseUrl}?c=${candidateId}&t=${shortToken}`;
+            return shortLink;
+        }
 
         // Share candidate link for individual access
         function shareCandidateLink(candidateId) {

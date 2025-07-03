@@ -122,11 +122,33 @@
         @keyframes rotate {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-
-        .header-content {
+        }        .header-content {
             position: relative;
             z-index: 1;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 2;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .logout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.3);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
         }
 
         .header h1 {
@@ -972,13 +994,894 @@
             justify-content: space-between;
             align-items: center;
             margin: 0.5rem 0;
+        }        .calendar-title {
+            color: var(--text-primary);
         }
 
-        .calendar-title {
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-weight: 500;
-            margin: 0;
+        /* =============================================================================
+           RESPONSIVE DESIGN - MEDIA QUERIES FOR ALL DEVICES
+           ============================================================================= */
+
+        /* Large Desktop (1400px and up) */
+        @media (min-width: 1400px) {
+            .header h1 {
+                font-size: 3rem;
+            }
+            
+            .table-container {
+                margin: 3rem;
+            }
+            
+            .controls {
+                margin: 3rem;
+            }
+        }
+
+        /* Standard Desktop (1024px to 1399px) */
+        @media (max-width: 1399px) {
+            th, td {
+                font-size: 0.75rem;
+                padding: 0.6rem;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Tablet Landscape (768px to 1023px) */
+        @media (max-width: 1023px) {
+            .header {
+                margin: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .logout-button {
+                top: 1.5rem;
+                right: 1.5rem;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .controls {
+                margin: 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-container {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .control-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .table-container {
+                margin: 1.5rem;
+            }
+            
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            table {
+                min-width: 900px;
+                font-size: 0.7rem;
+            }
+            
+            th, td {
+                padding: 0.5rem 0.3rem;
+                font-size: 0.7rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .calendar-container {
+                flex-direction: column;
+                margin: 1.5rem;
+                padding: 1rem;
+            }
+            
+            .calendar-section,
+            .events-section {
+                flex: none;
+                width: 100%;
+                height: auto;
+                min-height: 300px;
+            }
+            
+            .modal-content {
+                max-width: 90%;
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Tablet Portrait (576px to 767px) */
+        @media (max-width: 767px) {
+            .header {
+                margin: 1rem;
+                padding: 1rem;
+                position: relative;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .logout-button {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 1rem;
+                width: 100%;
+                padding: 0.75rem;
+            }
+            
+            .controls {
+                margin: 1rem;
+                gap: 0.75rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .table-container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+            
+            table {
+                min-width: 800px;
+                font-size: 0.65rem;
+            }
+            
+            th, td {
+                padding: 0.4rem 0.2rem;
+                font-size: 0.65rem;
+            }
+            
+            .candidate-name {
+                font-size: 0.7rem;
+                display: block;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                max-width: 80px;
+            }
+            
+            .contact-icons {
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+            
+            .contact-icon {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+            
+            .action-btn {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.7rem;
+                min-width: 60px;
+                height: 28px;
+            }
+            
+            .edit-actions {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+            
+            .edit-actions .btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+                min-width: 60px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .dashboard {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                padding: 1rem;
+                border-radius: 15px;
+            }
+            
+            .modal-title {
+                font-size: 1.2rem;
+            }
+            
+            .form-input {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+            }
+            
+            .toast {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                transform: translateY(-100px);
+                font-size: 0.9rem;
+            }
+            
+            .toast.show {
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Landscape (481px to 575px) */
+        @media (max-width: 575px) {
+            .header {
+                margin: 0.75rem;
+                padding: 0.75rem;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header p {
+                font-size: 0.8rem;
+            }
+            
+            .controls {
+                margin: 0.75rem;
+                gap: 0.5rem;
+            }
+            
+            .search-input {
+                padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .search-icon {
+                left: 0.75rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+                flex: 1;
+                min-width: 100px;
+            }
+            
+            .control-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+                width: 100%;
+            }
+            
+            .table-container {
+                margin: 0.75rem;
+                border-radius: 12px;
+            }
+            
+            table {
+                min-width: 700px;
+                font-size: 0.6rem;
+            }
+            
+            th, td {
+                padding: 0.3rem 0.1rem;
+                font-size: 0.6rem;
+            }
+            
+            /* Specific column adjustments for mobile */
+            th:nth-child(1), td:nth-child(1) { width: 12%; } /* Candidate */
+            th:nth-child(2), td:nth-child(2) { width: 8%; }  /* Work Status */
+            th:nth-child(3), td:nth-child(3) { width: 6%; }  /* Document */
+            th:nth-child(4), td:nth-child(4) { width: 8%; }  /* Interview */
+            th:nth-child(5), td:nth-child(5) { width: 10%; } /* Company */
+            th:nth-child(6), td:nth-child(6) { width: 8%; }  /* Project */
+            th:nth-child(7), td:nth-child(7) { width: 6%; }  /* Date */
+            th:nth-child(8), td:nth-child(8) { width: 8%; }  /* Blockers */
+            th:nth-child(9), td:nth-child(9) { width: 8%; }  /* Remarks */
+            th:nth-child(10), td:nth-child(10) { width: 8%; } /* Contact */
+            th:nth-child(11), td:nth-child(11) { width: 10%; } /* Actions */
+            
+            .candidate-name {
+                max-width: 60px;
+                font-size: 0.65rem;
+            }
+            
+            .status-badge {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.4rem;
+            }
+            
+            .blocker-tag {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.4rem;
+            }
+            
+            .dashboard {
+                margin: 0.75rem;
+                padding: 0.75rem;
+            }
+            
+            .dashboard-title {
+                font-size: 1.2rem;
+            }
+        }        /* Mobile Portrait (320px to 480px) - IMPROVED CLEAN DESIGN */
+        @media (max-width: 480px) {
+            /* Better spacing and clean layout */
+            .header {
+                margin: 1rem;
+                padding: 1.5rem 1rem;
+                border-radius: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+                line-height: 1.2;
+                margin-bottom: 0.5rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+            
+            .logout-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                margin-top: 1rem;
+                border-radius: 12px;
+            }
+            
+            /* Clean control layout */
+            .controls {
+                margin: 1rem;
+                gap: 1rem;
+                flex-direction: column;
+            }
+            
+            .search-input {
+                padding: 1rem;
+                font-size: 16px; /* Prevents zoom */
+                border-radius: 12px;
+                min-height: 48px;
+            }
+            
+            .search-icon {
+                left: 1rem;
+                font-size: 1.1rem;
+            }
+            
+            .btn {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+                border-radius: 12px;
+                font-weight: 600;
+            }
+            
+            .control-buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            
+            /* Spacious table container */
+            .table-container {
+                margin: 1rem;
+                border-radius: 16px;
+                overflow: hidden;
+            }
+            
+            /* Mobile-optimized table with card-like rows */
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: 0.5rem;
+            }
+            
+            table {
+                min-width: 100%;
+                font-size: 0.8rem;
+                border-spacing: 0 0.5rem;
+                border-collapse: separate;
+            }
+            
+            th {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 1rem 0.75rem;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Card-like table rows for mobile */
+            tr {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                margin-bottom: 0.5rem;
+                display: table-row;
+            }
+            
+            td {
+                padding: 0.875rem 0.75rem;
+                font-size: 0.8rem;
+                line-height: 1.4;
+                border-bottom: none;
+                border-radius: 8px;
+                vertical-align: middle;
+            }
+            
+            /* Better candidate name display */
+            .candidate-name {
+                font-size: 0.85rem;
+                font-weight: 600;
+                max-width: none;
+                white-space: normal;
+                word-wrap: break-word;
+                line-height: 1.3;
+            }
+            
+            /* Cleaner status badges */
+            .status-badge {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.6rem;
+                border-radius: 8px;
+                font-weight: 700;
+                display: inline-block;
+                margin: 0.1rem 0;
+            }
+            
+            /* Better contact icons layout */
+            .contact-icons {
+                display: flex;
+                gap: 0.5rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .contact-icon {
+                width: 28px;
+                height: 28px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Spacious action buttons */
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+            }
+            
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+                min-width: 80px;
+                min-height: 36px;
+                border-radius: 8px;
+                font-weight: 600;
+                width: 100%;
+                max-width: 120px;
+            }
+            
+            /* Better edit mode styling */
+            .edit-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .edit-actions .btn {
+                min-width: 100px;
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+                border-radius: 8px;
+                width: 100%;
+                max-width: 140px;
+            }
+            
+            /* Clean edit inputs */
+            .edit-input {
+                padding: 0.75rem;
+                font-size: 0.8rem;
+                border-radius: 8px;
+                border: 2px solid var(--border-color);
+                background: rgba(255, 255, 255, 0.1);
+                min-height: 40px;
+            }
+            
+            .edit-input:focus {
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            }
+            
+            /* Better required field highlighting */
+            .required-field {
+                border-color: #f59e0b !important;
+                background: rgba(245, 158, 11, 0.1) !important;
+            }
+            
+            /* Spacious dashboard */
+            .dashboard {
+                margin: 1rem;
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+            
+            .dashboard-title {
+                font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem;
+                border-radius: 12px;
+                text-align: center;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            
+            /* Clean modal design */
+            .modal-content {
+                max-width: 95%;
+                margin: 1rem;
+                padding: 1.5rem;
+                border-radius: 16px;
+                max-height: 85vh;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+            
+            .form-input {
+                padding: 1rem;
+                font-size: 16px; /* Prevents zoom */
+                border-radius: 10px;
+                min-height: 48px;
+                border: 2px solid var(--border-color);
+            }
+            
+            .form-input:focus {
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+            
+            /* Spacious toast notifications */
+            .toast {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                padding: 1rem 1.25rem;
+                font-size: 0.9rem;
+                border-radius: 12px;
+                font-weight: 600;
+                line-height: 1.4;
+            }
+            
+            .toast.show {
+                transform: translateY(0);
+            }
+            
+            /* Better calendar layout */
+            .calendar-container {
+                flex-direction: column;
+                margin: 1rem;
+                padding: 1.5rem;
+                gap: 1.5rem;
+                border-radius: 16px;
+            }
+            
+            .calendar-section,
+            .events-section {
+                flex: none;
+                width: 100%;
+                min-height: 300px;
+                border-radius: 12px;
+                padding: 1rem;
+            }
+            
+            /* Hide overly complex elements on mobile */
+            .blocker-tag {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+                margin: 0.1rem;
+                border-radius: 6px;
+            }
+            
+            /* Simplified column layout for mobile */
+            th:nth-child(1), td:nth-child(1) { width: 20%; } /* Candidate */
+            th:nth-child(2), td:nth-child(2) { width: 15%; } /* Status */
+            th:nth-child(3), td:nth-child(3) { width: 10%; } /* Document */
+            th:nth-child(4), td:nth-child(4) { width: 15%; } /* Interview */
+            th:nth-child(5), td:nth-child(5) { width: 15%; } /* Company */
+            th:nth-child(6), td:nth-child(6) { width: 10%; } /* Project */
+            th:nth-child(7), td:nth-child(7) { width: 10%; } /* Date */
+            th:nth-child(8), td:nth-child(8) { width: 10%; } /* Blockers */
+            th:nth-child(9), td:nth-child(9) { width: 15%; } /* Remarks */
+            th:nth-child(10), td:nth-child(10) { width: 15%; } /* Contact */
+            th:nth-child(11), td:nth-child(11) { width: 20%; } /* Actions */
+        }        /* Extra Small Mobile (Below 320px) - ULTRA CLEAN DESIGN */
+        @media (max-width: 319px) {
+            /* Minimal but functional layout */
+            .header {
+                margin: 0.75rem;
+                padding: 1rem 0.75rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .header p {
+                font-size: 0.8rem;
+            }
+            
+            .logout-button {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .controls {
+                margin: 0.75rem;
+                gap: 0.75rem;
+            }
+            
+            .search-input {
+                padding: 0.875rem;
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+                min-height: 44px;
+            }
+            
+            .table-container {
+                margin: 0.75rem;
+            }
+            
+            /* Simplified table for very small screens */
+            table {
+                font-size: 0.75rem;
+                border-spacing: 0 0.25rem;
+            }
+            
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.75rem;
+            }
+            
+            .candidate-name {
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+            
+            .action-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+                min-width: 70px;
+                min-height: 36px;
+            }
+            
+            .modal-content {
+                margin: 0.75rem;
+                padding: 1.25rem;
+            }
+            
+            .form-input {
+                padding: 0.875rem;
+                font-size: 16px;
+                min-height: 44px;
+            }
+            
+            .dashboard {
+                margin: 0.75rem;
+                padding: 1.25rem;
+            }
+        }
+
+        /* High DPI / Retina Display Adjustments */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+            .header::before {
+                background-size: 50px 50px;
+            }
+            
+            .animated-bg::before {
+                background-size: 50px 50px;
+            }
+        }
+
+        /* Landscape Orientation for Mobile Devices */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 0.5rem;
+                margin: 0.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.2rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .header p {
+                font-size: 0.7rem;
+            }
+            
+            .logout-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .controls {
+                margin: 0.5rem;
+                gap: 0.5rem;
+            }
+            
+            .table-container {
+                margin: 0.5rem;
+            }
+            
+            .modal-content {
+                max-height: 85vh;
+                padding: 1rem;
+            }
+            
+            .dashboard {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn,
+            .action-btn,
+            .contact-icon,
+            .candidate-name {
+                min-height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .search-input {
+                padding: 0.75rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .form-input {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 0.75rem;
+            }
+            
+            th, td {
+                padding: 0.5rem 0.3rem;
+            }
+            
+            .table-wrapper {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .controls,
+            .logout-button,
+            .dashboard,
+            .action-buttons,
+            .contact-icons,
+            .btn,
+            .modal {
+                display: none !important;
+            }
+            
+            .table-container {
+                margin: 0;
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+            
+            table {
+                width: 100%;
+                font-size: 10pt;
+                color: #000;
+                background: white;
+            }
+            
+            th, td {
+                border: 1px solid #000;
+                padding: 0.3rem;
+                background: white;
+                color: #000;
+            }
+              th {
+                background: #f0f0f0 !important;
+            }
         }
 
         .calendar-nav {
@@ -1895,9 +2798,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-    <div class="animated-bg"></div>
-    
-    <div class="header">
+    <div class="animated-bg"></div>    <div class="header">
         <div class="header-content">
             <h1>Protos Nexus</h1>
             <p>Professional recruitment and candidate tracking platform</p>
@@ -1926,9 +2827,8 @@
                 <div class="calendar-day-header">Fri</div>
                 <div class="calendar-day-header">Sat</div>
                 <!-- Calendar days will be populated by JavaScript -->
-            </div>
-            <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
-                Double-click any date to schedule an interview
+            </div>            <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
+                View-only calendar - Interview dates displayed
             </div>
         </div>
         
@@ -1986,12 +2886,10 @@
         </div>
           <div class="control-buttons">
             <button class="btn btn-primary" onclick="addCandidate()">
-                ➕ Add Candidate
-            </button>
-            <button class="btn btn-secondary" onclick="exportData()">
+                ➕ Add Candidate            </button>            <button class="btn btn-secondary" onclick="exportData()">
                 📊 Export to Excel
             </button>
-            <button class="btn btn-secondary" onclick="window.open('history.html', '_blank')">
+            <button class="btn btn-secondary" onclick="window.open('/history', '_blank')">
                 📋 History
             </button>
         </div>
@@ -2036,25 +2934,11 @@
                     <input type="email" id="modalEmail" class="form-input" required>
                 </div>                <div class="form-group">
                     <label class="form-label">Phone</label>
-                    <input type="tel" id="modalPhone" class="form-input">
-                </div>                <div class="form-group">
-                    <label class="form-label">Working Status</label>
-                    <select id="modalStatus" class="form-input">
-                        <option value="Idle">Idle</option>
-                        <option value="Training">Training</option>
-                        <option value="Scheduling">Scheduling</option>
-                        <option value="Interview">Interview</option>
-                        <option value="L2">L2</option>
-                        <option value="L3">L3</option>
-                        <option value="Working">Working</option>
-                    </select>
-                </div><div class="form-group">
-                    <label class="form-label">Company</label>
-                    <input type="text" id="modalCompany" class="form-input">
-                </div><div class="form-group">
-                    <label class="form-label">Project</label>
-                    <input type="text" id="modalProject" class="form-input">
-                </div>                <div class="form-group" style="text-align: center;">
+                    <div style="display: flex; align-items: center;">
+                        <span style="background: rgba(255, 255, 255, 0.1); padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-right: none; border-radius: 8px 0 0 8px; color: white;">+91</span>
+                        <input type="tel" id="modalPhone" class="form-input" placeholder="Enter 10 digit number" maxlength="10" pattern="[0-9]{10}" style="border-radius: 0 8px 8px 0; flex: 1;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
+                </div><div class="form-group" style="text-align: center;">
                     <button type="submit" id="modalSubmitBtn" class="btn btn-primary" style="width: auto; padding: 12px 24px;">Add Candidate</button>
                 </div>
             </form>
@@ -2087,6 +2971,35 @@
                     ❌ Cancel
                 </button>
             </div>
+        </div>    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 1rem;">
+                <h2 class="modal-title" style="color: #ef4444; display: flex; align-items: center; gap: 0.5rem;">
+                    🗑️ Delete Candidate
+                </h2>
+            </div>
+            <div class="modal-body" style="padding: 0 0 1.5rem 0;">
+                <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 0.5rem;">
+                    Are you sure you want to delete this candidate?
+                </p>
+                <p id="deleteCandidateName" style="color: #fff; font-weight: 600; margin-bottom: 1rem;">
+                    <!-- Candidate name will be inserted here -->
+                </p>
+                <p style="color: #fbbf24; font-size: 0.9rem; margin: 0;">
+                    ⚠️ This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()" style="padding: 0.5rem 1rem;">
+                    Cancel
+                </button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger" style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 0.5rem 1rem;">
+                    Delete
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2111,10 +3024,40 @@
                 <div class="form-group">
                     <label for="scheduleDate">Interview Date</label>
                     <input type="date" id="scheduleDate" class="form-input" required>
-                </div>
-                <div class="form-group">
+                </div>                <div class="form-group">
                     <label for="scheduleTime">Interview Time</label>
-                    <input type="time" id="scheduleTime" class="form-input" required>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <select id="scheduleHour" class="form-input" required style="flex: 1;">
+                            <option value="">Hour</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                        <span style="color: rgba(255, 255, 255, 0.7);">:</span>
+                        <select id="scheduleMinutes" class="form-input" required style="flex: 1;">
+                            <option value="">Min</option>
+                            <option value="00">00</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                        <select id="scheduleAmPm" class="form-input" required style="flex: 1;">
+                            <option value="">AM/PM</option>
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="scheduleType">Interview Type</label>
@@ -2136,86 +3079,331 @@
                     </button>
                 </div>
             </form>        </div>
-    </div>
-    
-    <script>
-        // Candidate data structure - starts empty
+    </div>    
+    <script>        // Check authentication on page load
+        function checkAuthentication() {
+            // Check if accessing via shared candidate link
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedCandidateId = urlParams.get('c');
+            const shareToken = urlParams.get('t');
+            
+            if (sharedCandidateId && shareToken) {
+                // Allow access for shared candidate links without login
+                return 'shared';
+            }
+            
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const userEmail = sessionStorage.getItem('userEmail');
+              if (!isLoggedIn || isLoggedIn !== 'true' || userEmail !== 'a5hhaadx@gmail.com') {
+                // Redirect to login if not authenticated
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }        // Check authentication immediately
+        const authResult = checkAuthentication();
+        if (authResult === false) {
+            // Stop script execution if not authenticated
+            throw new Error('Authentication required');
+        }
+
+        // Handle shared candidate access
+        let isSharedAccess = authResult === 'shared';
+        let sharedCandidateId = null;        if (isSharedAccess) {
+            const urlParams = new URLSearchParams(window.location.search);
+            sharedCandidateId = urlParams.get('c');        }function setupSharedCandidateView(candidateId) {
+            // Hide admin elements but KEEP calendar, clock, and table visible
+            const elementsToHide = [
+                '.logout-button',
+                '.controls',
+                '.dashboard'
+            ];
+            
+            elementsToHide.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(el => el.style.display = 'none');
+            });
+              // EXPLICITLY SHOW the table container and calendar
+            const tableContainer = document.querySelector('.table-container');
+            if (tableContainer) {
+                tableContainer.style.display = 'block';
+                console.log('Table container set to visible');
+            }
+            
+            // Also ensure the main content area is visible
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.style.display = 'block';
+            }
+            
+            // Ensure table wrapper is visible
+            const tableWrapper = document.querySelector('.table-wrapper');
+            if (tableWrapper) {
+                tableWrapper.style.display = 'block';
+            }
+            
+            // SHOW calendar container, upcoming interviews, and clock
+            const calendarContainer = document.querySelector('.calendar-container');
+            if (calendarContainer) {
+                calendarContainer.style.display = 'flex'; // Show calendar section
+            }
+            
+            // Update header for shared view with personalized message
+            const header = document.querySelector('.header');
+            if (header) {
+                header.innerHTML = `
+                    <div class="header-content">
+                        <h1>📋 Protos Nexus - Candidate Portal</h1>
+                        <p>View all candidates and edit your own information</p>
+                    </div>
+                `;
+            }
+              // Show ALL candidates but enable editing only for the shared candidate
+            if (candidates && candidates.length > 0) {
+                const sharedCandidate = candidates.find(c => c.id == candidateId);
+                if (sharedCandidate) {
+                    // Don't filter candidates - show all but mark which one can be edited
+                    window.editableCandidateId = parseInt(candidateId);                    console.log('Setting editableCandidateId to:', window.editableCandidateId, 'for candidate:', sharedCandidate.name);
+                    console.log('All candidate IDs:', candidates.map(c => ({id: c.id, name: c.name})));
+                    console.log('About to render table for shared view...');
+                    renderTable();
+                    console.log('Table rendered for shared view');
+                    
+                    // Hide sensitive columns and apply public view restrictions
+                    hidesensitiveColumns();
+                    
+                    console.log('Public view loaded - editable candidate:', sharedCandidate.name);
+                } else {
+                    console.error('Candidate not found');
+                    // Show error message
+                    document.body.innerHTML = `
+                        <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: white; text-align: center; padding: 2rem;">
+                            <div style="background: rgba(255, 255, 255, 0.05); padding: 3rem; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <h1 style="font-size: 2rem; margin-bottom: 1rem; color: #ef4444;">❌ Access Denied</h1>
+                                <p style="font-size: 1.1rem; opacity: 0.8;">The candidate link is invalid or expired.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Initialize calendar and clock features
+                renderCalendar();
+                displayUpcomingInterviews();
+                initializeSandClock();
+            }
+        }function hidesensitiveColumns() {
+            // Hide contact and action columns for public view but keep table fully functional
+            const style = document.createElement('style');
+            style.textContent = `
+                th:nth-child(10), td:nth-child(10), /* Contact */
+                th:nth-child(11), td:nth-child(11)  /* Actions */
+                { display: none !important; }
+                  /* Hide admin-only controls within calendar */
+                .calendar-plus-btn { display: none !important; }
+                
+                /* Ensure table and main content are visible in shared view */
+                .main-content, .table-container, .table-wrapper { 
+                    display: block !important; 
+                    visibility: visible !important;
+                }
+                
+                .table-container::after {
+                    content: "📌 Real-time candidate information portal - Contact details hidden for privacy";
+                    display: block;
+                    text-align: center;
+                    padding: 1rem;
+                    background: rgba(59, 130, 246, 0.1);
+                    color: #3b82f6;
+                    border-radius: 8px;
+                    margin-top: 1rem;
+                    font-weight: 500;
+                }
+                
+                /* Enhanced public view footer */
+                .shared-view-footer {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 10px 15px;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    z-index: 1000;
+                }
+                
+                @media (max-width: 768px) {
+                    .shared-view-footer {
+                        bottom: 10px;
+                        right: 10px;
+                        left: 10px;
+                        text-align: center;
+                        padding: 12px;
+                        font-size: 0.85rem;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Add a footer element for the shared view
+            const footer = document.createElement('div');
+            footer.className = 'shared-view-footer';
+            footer.innerHTML = '🌐 Public Portal - <a href="/" style="color: #3b82f6; text-decoration: none;">Main Site</a>';
+            document.body.appendChild(footer);
+        }
+
+        // Logout function
+        function logout() {
+            // Clear all session data
+            sessionStorage.clear();
+            localStorage.clear();
+            
+            // Redirect to login page
+            window.location.href = '/login';
+        }
+
+        // Candidate data structure - loaded from API
         let candidates = [];
 
-        // Initialize with sample data
-        function initializeData() {
-            const sampleData = [
-                {
-                    id: 1,
-                    name: "MD Ashhaad Sadique",
-                    email: "ashhaad@example.com",
-                    phone: "+1234567890",
-                    status: "Interview",
-                    document: "resume_ashhaad.pdf",
-                    interview: "2025-06-27T14:00",
-                    interviewType: "First Round",
-                    company: "TechCorp",
-                    project: "",
-                    date: "",
-                    blockers: [],
-                    remarks: "Awaiting Interview"
-                },
-                {
-                    id: 2,
-                    name: "Sarah Johnson",
-                    email: "sarah@example.com", 
-                    phone: "+1234567891",
-                    status: "Working",
-                    document: "resume_sarah.pdf",
-                    interview: "2025-06-20T10:00",
-                    interviewType: "Technical",
-                    company: "Protos Solutions",
-                    project: "Web Development",
-                    date: "2025-06-01",
-                    blockers: [],
-                    remarks: "Active Employee"
-                },
-                {
-                    id: 3,
-                    name: "Mike Wilson",
-                    email: "mike@example.com",
-                    phone: "+1234567892", 
-                    status: "L2",
-                    document: "resume_mike.pdf",
-                    interview: "2025-06-25T16:00",
-                    interviewType: "Second Round",
-                    company: "",
-                    project: "",
-                    date: "",
-                    blockers: [],
-                    remarks: "L2 Interview Scheduled"
-                },
-                {
-                    id: 4,
-                    name: "Emily Davis",
-                    email: "emily@example.com",
-                    phone: "+1234567893",
-                    status: "Idle",
-                    document: "",
-                    interview: "",
-                    interviewType: "",
-                    company: "",
-                    project: "",
-                    date: "",
-                    blockers: ["Visa processing"],
-                    remarks: "Currently Idle"
-                }
-            ];            // Load from localStorage or start with empty array
-            const savedData = localStorage.getItem('candidates');
-            if (savedData) {
-                candidates = JSON.parse(savedData);
-            } else {
-                candidates = [];
-                saveCandidates();
+        // API Functions for Neon PostgreSQL integration
+        async function loadCandidatesFromAPI() {
+            try {
+                console.log('Loading candidates from API...');
+                const response = await fetch('/.netlify/functions/candidates');
+                if (response.ok) {
+                    const rawCandidates = await response.json();                    // Ensure all candidates have required properties
+                    candidates = rawCandidates.map(candidate => ({
+                        ...candidate,
+                        blockers: candidate.blockers || [],
+                        skills: candidate.skills || '',
+                        experience: candidate.experience || '',
+                        phone: candidate.phone || '',
+                        document: candidate.document || '',
+                        company: candidate.company || '',
+                        position: candidate.position || '',
+                        status: candidate.status || 'pending',
+                        interview: candidate.interview || null,
+                        interviewType: candidate.interviewType || null,
+                        remarks: candidate.remarks || ''
+                    }));
+                    console.log('Candidates loaded:', candidates.length);
+                } else {
+                    console.error('Failed to load candidates:', response.status);
+                    // Initialize with sample data if API fails
+                    initializeWithSampleData();                }
+            } catch (error) {
+                console.error('Error loading candidates:', error);
+                // Initialize with sample data if API fails
+                initializeWithSampleData();
             }
-        }// Save candidates to localStorage
-        function saveCandidates() {
-            localStorage.setItem('candidates', JSON.stringify(candidates));
+        }
+
+        async function saveCandidateToAPI(candidate) {
+            try {
+                console.log('Saving candidate to API:', candidate);
+                const response = await fetch('/.netlify/functions/candidates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(candidate)
+                });
+                
+                if (response.ok) {
+                    const savedCandidate = await response.json();
+                    console.log('Candidate saved successfully:', savedCandidate);
+                    return savedCandidate;
+                } else {
+                    throw new Error(`Failed to save candidate: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error saving candidate:', error);
+                throw error;
+            }
+        }
+        
+        async function updateCandidateInAPI(candidate) {
+            try {
+                console.log('Updating candidate in API:', candidate);
+                const response = await fetch('/.netlify/functions/candidates', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(candidate)
+                });
+                
+                if (response.ok) {
+                    console.log('Candidate updated successfully');
+                    return true;
+                } else {
+                    throw new Error(`Failed to update candidate: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error updating candidate:', error);
+                throw error;
+            }
+        }
+        
+        async function deleteCandidateFromAPI(candidateId) {
+            try {
+                console.log('Deleting candidate from API:', candidateId);
+                const response = await fetch(`/.netlify/functions/candidates?id=${candidateId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    console.log('Candidate deleted successfully');
+                    return true;
+                } else {
+                    throw new Error(`Failed to delete candidate: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error deleting candidate:', error);
+                throw error;
+            }
+        }        // Initialize with empty data (no sample data)
+        function initializeWithSampleData() {
+            // Start with empty candidates array
+            candidates = [];
+            console.log('Initialized with empty data - no sample candidates');        }        // Normalize remarks to match status for all candidates
+        function normalizeRemarksForAllCandidates() {
+            candidates.forEach(candidate => {
+                if (candidate.status && candidate.status.trim() !== '') {
+                    // Update remarks to match the current status
+                    candidate.remarks = getRemarksByStatus(candidate.status);
+                } else if (!candidate.remarks || candidate.remarks.trim() === '') {
+                    // If no status and no remarks, set empty
+                    candidate.remarks = '';
+                }
+            });
+            console.log('Normalized remarks for all candidates based on their status');
+        }        // Initialize the application with API data
+        async function initializeApplication() {
+            console.log('Initializing application...');
+            try {
+                await loadCandidatesFromAPI();
+                // Normalize remarks to ensure consistency
+                normalizeRemarksForAllCandidates();
+                
+                // Handle shared candidate access AFTER candidates are loaded
+                if (isSharedAccess && sharedCandidateId) {
+                    setupSharedCandidateView(sharedCandidateId);
+                } else {
+                    renderTable();
+                    updateDashboardIfExists();
+                }
+            } catch (error) {
+                console.error('Failed to initialize with API, using sample data:', error);
+                initializeWithSampleData();
+                // Normalize remarks even for sample data
+                normalizeRemarksForAllCandidates();
+                renderTable();
+                updateDashboardIfExists();
+            }
         }
 
         // Load theme from localStorage
@@ -2244,16 +3432,6 @@
                     document.getElementById('modalName').value = '';
                     document.getElementById('modalEmail').value = '';
                     document.getElementById('modalPhone').value = '';
-                    document.getElementById('modalCompany').value = '';
-                    document.getElementById('modalProject').value = '';
-                    
-                    // For new candidates, only show Idle and Training options
-                    const statusSelect = document.getElementById('modalStatus');
-                    statusSelect.innerHTML = `
-                        <option value="Idle">Idle</option>
-                        <option value="Training">Training</option>
-                    `;
-                    statusSelect.value = 'Idle';
                     
                     // Update button text for new candidate
                     document.getElementById('modalSubmitBtn').textContent = 'Add Candidate';
@@ -2262,27 +3440,12 @@
                     document.getElementById('candidateForm').dataset.candidateId = 'new';                } else {
                     console.log('Editing existing candidate:', candidateId);
                     // Existing candidate - populate with current data
-                    const candidate = candidates.find(c => c.id === candidateId);
+                    const candidate = candidates.find(c => c.id == candidateId); // Use loose comparison
                     if (!candidate) return;
-                    
-                    // For existing candidates, show all status options
-                    const statusSelect = document.getElementById('modalStatus');
-                    statusSelect.innerHTML = `
-                        <option value="Idle">Idle</option>
-                        <option value="Training">Training</option>
-                        <option value="Scheduling">Scheduling</option>
-                        <option value="Interview">Interview</option>
-                        <option value="L2">L2</option>
-                        <option value="L3">L3</option>
-                        <option value="Working">Working</option>
-                    `;
 
                     document.getElementById('modalName').value = candidate.name;
                     document.getElementById('modalEmail').value = candidate.email;
                     document.getElementById('modalPhone').value = candidate.phone;
-                    document.getElementById('modalCompany').value = candidate.company;
-                    document.getElementById('modalProject').value = candidate.project;
-                    document.getElementById('modalStatus').value = candidate.status;
 
                     // Update button text for editing
                     document.getElementById('modalSubmitBtn').textContent = 'Update Candidate';
@@ -2291,8 +3454,6 @@
                     document.getElementById('candidateForm').dataset.candidateId = candidateId;
                 }
                   console.log('Showing modal');
-                // Set initial visibility of company and project fields
-                handleStatusChange();
                 // Show modal
                 document.getElementById('candidateModal').style.display = 'block';
                 document.body.style.overflow = 'hidden';
@@ -2314,6 +3475,12 @@
 
         // Add new candidate
         function addCandidate() {
+            // Prevent adding candidates in shared mode
+            if (window.editableCandidateId) {
+                alert('Adding new candidates is not allowed in shared view mode.');
+                return;
+            }
+
             console.log('addCandidate function called');
             try {
                 // Open modal for new candidate (don't add to array yet)
@@ -2322,15 +3489,18 @@
                 console.error('Error in addCandidate:', error);
                 alert('Error opening modal: ' + error.message);
             }
-        }
-
-        // Make function globally accessible
-        window.addCandidate = addCandidate;
-
-        // Schedule Interview Modal Functions
+        }        // Make function globally accessible
+        window.addCandidate = addCandidate;        // Schedule Interview Modal Functions
         function openScheduleModal() {
+            // In shared mode, allow candidates to schedule for themselves only
+            if (window.editableCandidateId) {
+                openScheduleModalForSharedCandidate();
+                return;
+            }
+
             const modal = document.getElementById('scheduleModal');
-            const candidateSelect = document.getElementById('scheduleCandidate');            const companyInput = document.getElementById('scheduleCompany');
+            const candidateSelect = document.getElementById('scheduleCandidate');
+            const companyInput = document.getElementById('scheduleCompany');
             
             // Clear and populate candidate dropdown (exclude Working status)
             candidateSelect.innerHTML = '<option value="">Choose a candidate...</option>';
@@ -2344,10 +3514,9 @@
                 });
             
             // Add event listener to auto-populate company name
-            candidateSelect.addEventListener('change', function() {
-                const selectedCandidateId = parseInt(this.value);
+            candidateSelect.addEventListener('change', function() {                const selectedCandidateId = parseInt(this.value);
                 if (selectedCandidateId) {
-                    const selectedCandidate = candidates.find(c => c.id === selectedCandidateId);
+                    const selectedCandidate = candidates.find(c => c.id == selectedCandidateId); // Use loose comparison
                     if (selectedCandidate && selectedCandidate.company) {
                         companyInput.value = selectedCandidate.company;
                     } else {
@@ -2355,22 +3524,70 @@
                     }
                 } else {
                     companyInput.value = '';
-                }
-            });
+                }            });
             
             // Set default date to today
             const today = new Date();
             document.getElementById('scheduleDate').value = today.toISOString().split('T')[0];
             
+            // Set default time values
+            document.getElementById('scheduleHour').value = '10'; // Default to 10 AM
+            document.getElementById('scheduleMinutes').value = '00';
+            document.getElementById('scheduleAmPm').value = 'AM';
+            
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
 
-        function closeScheduleModal() {
+        // Open schedule modal for shared candidate (only in shared mode)
+        function openScheduleModalForSharedCandidate() {
+            const modal = document.getElementById('scheduleModal');
+            const candidateSelect = document.getElementById('scheduleCandidate');
+            const companyInput = document.getElementById('scheduleCompany');
+            
+            // In shared mode, pre-select the editable candidate and disable dropdown
+            candidateSelect.innerHTML = '';
+            const editableCandidate = candidates.find(c => c.id === window.editableCandidateId);
+            if (editableCandidate) {
+                const option = document.createElement('option');
+                option.value = editableCandidate.id;
+                option.textContent = editableCandidate.name;
+                option.selected = true;
+                candidateSelect.appendChild(option);
+                candidateSelect.disabled = true; // Disable dropdown in shared mode
+                
+                // Pre-populate company if available
+                if (editableCandidate.company) {
+                    companyInput.value = editableCandidate.company;
+                }
+            }
+              // Set default date to today
+            const today = new Date();
+            document.getElementById('scheduleDate').value = today.toISOString().split('T')[0];
+            
+            // Set default time values
+            document.getElementById('scheduleHour').value = '10'; // Default to 10 AM
+            document.getElementById('scheduleMinutes').value = '00';
+            document.getElementById('scheduleAmPm').value = 'AM';
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }        function closeScheduleModal() {
             document.getElementById('scheduleModal').style.display = 'none';
             document.body.style.overflow = 'auto';
-            // Clear form
+            
+            // Re-enable candidate select dropdown (in case it was disabled in shared mode)
+            const candidateSelect = document.getElementById('scheduleCandidate');
+            if (candidateSelect) {
+                candidateSelect.disabled = false;
+            }
+              // Clear form
             document.getElementById('scheduleForm').reset();
+            
+            // Reset time dropdowns to default values
+            document.getElementById('scheduleHour').value = '';
+            document.getElementById('scheduleMinutes').value = '';
+            document.getElementById('scheduleAmPm').value = '';
         }
 
         // Close modal when clicking outside or pressing Escape
@@ -2388,18 +3605,39 @@
                     closeScheduleModal();
                 }
             }
-        });
-
-        function handleScheduleSubmit(event) {
+        });        function handleScheduleSubmit(event) {
             event.preventDefault();
             
             const candidateId = parseInt(document.getElementById('scheduleCandidate').value);
             const company = document.getElementById('scheduleCompany').value;
             const date = document.getElementById('scheduleDate').value;
-            const time = document.getElementById('scheduleTime').value;
+            
+            // Construct time from separate dropdowns
+            const hour = document.getElementById('scheduleHour').value;
+            const minutes = document.getElementById('scheduleMinutes').value;
+            const ampm = document.getElementById('scheduleAmPm').value;
+            
+            // Validate time inputs
+            if (!hour || !minutes || !ampm) {
+                alert('Please select hour, minutes, and AM/PM for the interview time.');
+                return;
+            }
+            
+            // Convert to 24-hour format
+            let hour24 = parseInt(hour);
+            if (ampm === 'PM' && hour24 !== 12) {
+                hour24 += 12;
+            } else if (ampm === 'AM' && hour24 === 12) {
+                hour24 = 0;
+            }
+            
+            // Format time as HH:MM
+            const time = `${hour24.toString().padStart(2, '0')}:${minutes}`;
+            
             const type = document.getElementById('scheduleType').value;
-              // Find the candidate and update their interview date
-            const candidate = candidates.find(c => c.id === candidateId);
+            
+            // Find the candidate and update their interview date
+            const candidate = candidates.find(c => c.id == candidateId); // Use loose comparison
             if (candidate) {
                 const interviewDateTime = `${date}T${time}`;
                 candidate.interview = interviewDateTime;
@@ -2410,15 +3648,25 @@
                 if (type !== 'Rescheduling' && candidate.status !== 'Working') {
                     candidate.status = 'Interview';
                 }
-                  // Update remarks based on status instead of interview details
-                candidate.status = getRemarksByStatus(candidate.status);
+                
+                // Update remarks based on status
+                candidate.remarks = getRemarksByStatus(candidate.status);
+                
+                // Save changes to API
+                updateCandidateInAPI(candidate).then(() => {
+                    console.log('Interview scheduled and saved to API');
+                    showToast(`Interview scheduled for ${candidate.name} at ${company} on ${formatDateTime(interviewDateTime)}`, 'success');
+                }).catch(error => {
+                    console.error('Failed to save interview to API:', error);
+                    showToast('Interview scheduled locally but failed to save to server', 'warning');
+                });
                 
                 // Refresh the table and calendar
                 renderTable();
                 renderCalendar();
                 displayUpcomingInterviews();
                 
-                closeScheduleModal();                showToast(`Interview scheduled for ${candidate.name} at ${company} on ${formatDateTime(interviewDateTime)}`, 'success');
+                closeScheduleModal();
             }
         }
         
@@ -2475,12 +3723,12 @@
                 const dayElement = createDayElement(day, false, year, month);
                 calendarGrid.appendChild(dayElement);
             }
-            
-            // Add next month's leading days to complete 6 weeks (42 total cells - 7 headers = 35 day cells)
+              // Add next month's leading days to complete 6 weeks (42 total cells - 7 headers = 35 day cells)
             const totalDaysAdded = firstDay + daysInMonth;
             const remainingCells = 35 - totalDaysAdded;
             for (let day = 1; day <= remainingCells; day++) {
-                const dayElement = createDayElement(day, true, year, month + 1);                calendarGrid.appendChild(dayElement);
+                const dayElement = createDayElement(day, true, year, month + 1);
+                calendarGrid.appendChild(dayElement);
             }
         }
 
@@ -2492,9 +3740,9 @@
             if (isOtherMonth) {
                 dayElement.classList.add('other-month');
             }
-            
-            // Check if it's today
-            const today = new Date();            if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate() && !isOtherMonth) {
+              // Check if it's today
+            const today = new Date();
+            if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate() && !isOtherMonth) {
                 dayElement.classList.add('today');
             }
             
@@ -2598,22 +3846,21 @@
         function nextMonth() {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
-        }
-
-        function goToToday() {
+        }        function goToToday() {
             currentDate = new Date();
-            renderCalendar();        }        // Initialize the application
+            renderCalendar();
+        }
+        
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded');
-            initializeData();
-            renderTable();
-            updateDashboard();
+            initializeApplication(); // This now loads from API instead of localStorage
             setupEventListeners();
             loadTheme();
             renderCalendar();
             displayUpcomingInterviews();
             initializeSandClock();
-        });        // Sand Clock Functions
+        });// Sand Clock Functions
         function initializeSandClock() {
             updateSandClock();
             // Update more frequently for smoother sand movement
@@ -2622,10 +3869,9 @@
             const now = new Date();
             const timeElement = document.getElementById('currentTime');
             
-            if (timeElement) {
-                // Update time display
+            if (timeElement) {                // Update time display
                 const timeString = now.toLocaleTimeString('en-US', { 
-                    hour12: false,
+                    hour12: true,
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit'
@@ -2804,14 +4050,12 @@
                                     easing: 'linear',
                                     delay: baseDelay * 1000,
                                     fill: 'forwards',
-                                    iterations: Infinity
-                                });
-                            });// Activate collection particle effects when sand is accumulating
+                                    iterations: Infinity                                });
+                            });
+                            
+                            // Activate collection particle effects when sand is accumulating
                             if (collectionParticles && sandBottomHeight > 0) {
-                                // Calculate the sand surface position within the bottom chamber
-                                // sandBottomHeight is the percentage of the bottom chamber filled
-                                // We need to position particles at the top of the filled area
-                                  collectionParticles.forEach((particle, index) => {
+                                collectionParticles.forEach((particle, index) => {
                                     particle.style.animationPlayState = 'running';
                                     particle.style.display = 'block';
                                     
@@ -2820,51 +4064,25 @@
                                     particle.style.background = collectionColors[index % 3];
                                     
                                     // Position particles to land on the sand surface
-                                    // Since sandBottomHeight grows upward, the surface is at the top
                                     const surfacePosition = (100 - sandBottomHeight) + '%';
                                     
-                                    // Vary collection timing based on sand flow
-                                    const collectionDelay = (index * 0.1) + (Math.random() * 0.3);
+                                    // Vary collection timing based on sand flow                                    const collectionDelay = (index * 0.1) + (Math.random() * 0.3);
                                     particle.style.animationDelay = collectionDelay + 's';
-                                    
-                                    // Create a brief settling animation at the correct height
-                                    particle.animate([
-                                        { 
-                                            top: `calc(${surfacePosition} - 8px)`,
-                                            opacity: 1,
-                                            transform: 'scale(1)'
-                                        },
-                                        { 
-                                            top: `calc(${surfacePosition} - 2px)`,
-                                            opacity: 0.8,
-                                            transform: 'scale(0.8)'
-                                        },
-                                        { 
-                                            top: surfacePosition,
-                                            opacity: 0.2,
-                                            transform: 'scale(0.4)'
-                                        }
-                                    ], {
-                                        duration: 600,
-                                        easing: 'ease-out',
-                                        delay: collectionDelay * 1000,
-                                        fill: 'forwards'
-                                    });
                                 });
-                            }                            // Show accumulation effect when bottom has sand
+                            }
+                            
+                            // Show accumulation effect when bottom has sand
                             if (accumulation && sandBottomHeight > 5) {
                                 // Position the accumulation line at the sand surface
                                 const sandSurfacePosition = (100 - sandBottomHeight) + '%';
                                 accumulation.style.top = `calc(${sandSurfacePosition} - 1px)`;
                                 accumulation.style.display = 'block';
                                 accumulation.style.animationPlayState = 'running';
-                                
-                                // Update accumulation colors
+                                  // Update accumulation colors
                                 accumulation.style.background = `linear-gradient(90deg, 
                                     transparent 0%, 
                                     ${sandColors.primary}66 20%, 
                                     ${sandColors.secondary}99 50%, 
-                                    ${sandColors.primary}66 80%, 
                                     transparent 100%
                                 )`;
                             }
@@ -2935,7 +4153,7 @@
             console.log('Window loaded');
             if (!document.querySelector('#candidateTable tbody').hasChildNodes()) {
                 renderTable();
-                updateDashboard();
+                updateDashboardIfExists();
                 setupEventListeners();
                 loadTheme();
             }
@@ -2944,26 +4162,27 @@
         // Event listeners setup
         function setupEventListeners() {            // Search functionality
             document.getElementById('searchInput').addEventListener('input', handleSearch);
-            
-            // Table sorting
+              // Table sorting
             document.querySelectorAll('th.sortable').forEach(th => {
                 th.addEventListener('click', () => handleSort(th.dataset.sort));
             });
-
-            // Status change listener to show/hide company and project fields
-            document.getElementById('modalStatus').addEventListener('change', handleStatusChange);
 
             // Close modal on outside click
             document.getElementById('candidateModal').addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeModal();
                 }
-            });
-
-            // Upload modal outside click
+            });            // Upload modal outside click
             document.getElementById('uploadModal').addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeUploadModal();
+                }
+            });
+
+            // Delete modal outside click
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeDeleteModal();
                 }
             });
 
@@ -3030,30 +4249,7 @@
             // Refresh upcoming interviews
             if (typeof displayUpcomingInterviews !== 'undefined') {
                 displayUpcomingInterviews();
-            }
-        }
-
-        // Handle status change to show/hide company and project fields
-        function handleStatusChange() {
-            const status = document.getElementById('modalStatus').value;
-            const companyGroup = document.getElementById('modalCompany').closest('.form-group');
-            const projectGroup = document.getElementById('modalProject').closest('.form-group');
-            const companyInput = document.getElementById('modalCompany');
-            const projectInput = document.getElementById('modalProject');
-            
-            if (status === 'Working') {
-                companyGroup.style.display = 'block';
-                projectGroup.style.display = 'block';
-                companyInput.setAttribute('required', 'required');
-            } else {
-                companyGroup.style.display = 'none';
-                projectGroup.style.display = 'none';
-                companyInput.removeAttribute('required');
-                // Clear the values when hidden
-                companyInput.value = '';
-                projectInput.value = '';
-            }
-        }
+            }        }
 
         // Create a table row for a candidate
         function createTableRow(candidate) {
@@ -3075,12 +4271,11 @@
                     }
                 </td><td>
                     ${['idle', 'training', 'scheduling', 'working'].includes(candidate.status.toLowerCase()) ? 'N/A' : formatDateTime(candidate.interview)}
+                </td>                <td>
+                    ${candidate.status.toLowerCase() === 'working' ? (candidate.company || 'N/A') : 'N/A'}
                 </td>
                 <td>
-                    ${candidate.status.toLowerCase() === 'working' ? candidate.company : 'N/A'}
-                </td>
-                <td>
-                    ${candidate.status.toLowerCase() === 'working' ? candidate.project : 'N/A'}
+                    ${candidate.status.toLowerCase() === 'working' ? (candidate.project || 'N/A') : 'N/A'}
                 </td>
                 <td>${candidate.status.toLowerCase() === 'working' ? formatDate(candidate.date) : 'N/A'}</td><td>
                     <div class="blockers">
@@ -3091,8 +4286,8 @@
                     </div>
                 </td>
                 <td>
-                    ${candidate.remarks}
-                </td>                <td>                    <div class="contact-icons">                        <a href="mailto:${candidate.email}" class="contact-icon email" title="Send Email" tabindex="0">
+                    ${candidate.remarks || 'N/A'}
+                </td><td>                    <div class="contact-icons">                        <a href="mailto:${candidate.email}" class="contact-icon email" title="Send Email" tabindex="0">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                             </svg>
@@ -3105,15 +4300,18 @@
                             🔗
                         </a>
                     </div>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editRow(${candidate.id})" title="Edit Candidate" tabindex="0">
-                            ✏️
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteCandidate(${candidate.id})" title="Delete Candidate" tabindex="0">
-                            🗑️
-                        </button>
+                </td>                <td>
+                    <div class="action-buttons">                        ${
+                            // In shared mode, only show edit/delete buttons for the editable candidate
+                            window.editableCandidateId && window.editableCandidateId != candidate.id ? 
+                            '<span style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem;">View Only</span>' :
+                            `<button class="action-btn edit-btn" onclick="editRow(${candidate.id})" title="Edit Candidate" tabindex="0">
+                                ✏️
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteCandidate(${candidate.id})" title="Delete Candidate" tabindex="0">
+                                🗑️
+                            </button>`
+                        }
                     </div>
                 </td>
             `;
@@ -3197,104 +4395,106 @@
             // Field updates now only happen through row editing
             showToast('Use the Edit button to modify candidate information', 'warning');
             return;
-        }
-
-        // Handle modal form submission
-        function handleModalSubmit(e) {
+        }        // Handle modal form submission
+        async function handleModalSubmit(e) {
             e.preventDefault();
             console.log('handleModalSubmit called');
             console.log('Event target:', e.target);
             console.log('Form element:', document.getElementById('candidateForm'));
-            
-            const candidateIdData = e.target.dataset.candidateId;
+              const candidateIdData = e.target.dataset.candidateId;
             console.log('candidateIdData:', candidateIdData);
             
             // If candidateIdData is undefined, check if we're adding a new candidate
             if (!candidateIdData || candidateIdData === 'new') {
                 console.log('Creating new candidate');
                 try {
-                    // Create new candidate
-                    const status = document.getElementById('modalStatus').value;
+                    // Create new candidate without any default status
                     const candidateId = candidates.length > 0 ? Math.max(...candidates.map(c => c.id)) + 1 : 1;
                     const email = document.getElementById('modalEmail').value;
                     const name = document.getElementById('modalName').value;
+                    const phone = document.getElementById('modalPhone').value;
                     
-                    console.log('Form data:', { name, email, status });
+                    console.log('Form data:', { name, email, phone });
                     console.log('New candidate ID will be:', candidateId);
                     
                     if (!name || !email) {
                         showToast('Name and email are required', 'error');
                         return false;
                     }
-                    
-                    const newCandidate = {
-                    id: candidateId,
+
+                    // Validate phone number (should be exactly 10 digits)
+                    if (phone && !/^[0-9]{10}$/.test(phone)) {
+                        showToast('Please enter a valid 10-digit phone number', 'error');
+                        return false;
+                    }
+                      const newCandidate = {
+                    // Don't include ID here - let the API generate it
                     name: name,
                     email: email,
-                    phone: document.getElementById('modalPhone').value,
+                    phone: phone,
                     document: "", // Empty document initially
-                    company: status === 'Working' ? document.getElementById('modalCompany').value : '',
-                    status: status,
-                    project: status === 'Working' ? document.getElementById('modalProject').value : '',
+                    company: '', // Empty company initially
+                    status: '', // No default status
+                    project: '', // Empty project initially
                     interview: "", // Empty interview initially
                     interviewType: "", // Empty interview type initially
                     date: "", // Empty date initially
                     blockers: [],
-                    remarks: getRemarksByStatus(status),
-                    uniqueLink: generatePermanentLink(candidateId, email)                    };
+                    remarks: '' // No default remarks
+                    };
                     
                     console.log('New candidate object:', newCandidate);
                     
-                    candidates.push(newCandidate);
-                
-                // Log the addition to history
-                logChange('Added', newCandidate.name, `New candidate added with status: ${status}, Email: ${email}, Phone: ${phone}`);
-                
-                console.log('Candidates array after push:', candidates.length);
-                console.log('Full candidates array:', candidates);
-                
-                // Try to update UI components with safety checks
-                try {
-                    if (document.getElementById('candidateTableBody')) {
-                        renderTable();
+                    // Save to API first
+                    const savedCandidate = await saveCandidateToAPI(newCandidate);
+                    
+                    // Add to local array with the ID from API
+                    candidates.push(savedCandidate);
+                    
+                    // Log the addition to history (this will also go to API via the candidates.js function)
+                    logChange('Added', savedCandidate.name, `New candidate added - Email: ${email}, Phone: ${phone}`);
+                    
+                    console.log('Candidates array after API save:', candidates.length);
+                      // Update UI components
+                    try {
+                        if (document.getElementById('candidateTableBody')) {
+                            renderTable();
+                        }
+                    } catch (e) {
+                        console.warn('Could not update table:', e.message);
                     }
-                } catch (e) {
-                    console.warn('Could not update table:', e.message);
-                }
-                
-                try {
-                    if (document.getElementById('statsGrid')) {
-                        updateDashboard();
-                    }
-                } catch (e) {
-                    console.warn('Could not update dashboard:', e.message);
-                }
-                
-                closeModal();
-                showToast('New candidate added successfully', 'success');
-                
-                console.log('New candidate added successfully');
+                    
+                    updateDashboardIfExists();
+                      closeModal();
+                    showToast('New candidate added successfully', 'success');
+                    console.log('New candidate added successfully');
                 } catch (error) {
                     console.error('Error creating new candidate:', error);
                     showToast('Error adding candidate: ' + error.message, 'error');
                 }
             } else {
-                console.log('Updating existing candidate');
-                // Update existing candidate                const candidateId = parseInt(candidateIdData);
-                const candidate = candidates.find(c => c.id === candidateId);
+                console.log('Updating existing candidate');                // Update existing candidate
+                const candidateId = candidateIdData; // Keep as string, don't parse to int
+                const candidate = candidates.find(c => c.id == candidateId); // Use == for loose comparison
                 
                 if (candidate) {
-                    const status = document.getElementById('modalStatus').value;
+                    const phone = document.getElementById('modalPhone').value;
+                    
+                    // Validate phone number (should be exactly 10 digits)
+                    if (phone && !/^[0-9]{10}$/.test(phone)) {
+                        showToast('Please enter a valid 10-digit phone number', 'error');
+                        return false;
+                    }
                     
                     candidate.name = document.getElementById('modalName').value;
                     candidate.email = document.getElementById('modalEmail').value;
-                    candidate.phone = document.getElementById('modalPhone').value;
-                    candidate.company = status === 'Working' ? document.getElementById('modalCompany').value : '';
-                    candidate.project = status === 'Working' ? document.getElementById('modalProject').value : '';
-                    candidate.status = status;
-                    candidate.remarks = getRemarksByStatus(status);
-                      renderTable();
-                    updateDashboard();
+                    candidate.phone = phone;
+                    
+                    // Update in API
+                    await updateCandidateInAPI(candidate);
+                    
+                    renderTable();
+                    updateDashboardIfExists();
                     closeModal();
                     showToast('Candidate updated successfully', 'success');
                 }
@@ -3346,15 +4546,19 @@
                 'Contract negotiation': 'Contract'
             };
             return shortForms[blocker] || blocker;
-        }
+        }        function editRow(candidateId) {
+            // Check if editing is allowed in shared mode
+            if (window.editableCandidateId && window.editableCandidateId != candidateId) {
+                alert('You can only edit your own candidate information in this shared view.');
+                return;
+            }
 
-        function editRow(candidateId) {
             // Cancel any existing edits
             if (currentEditingRow) {
                 cancelRowEdit();
             }
 
-            const candidate = candidates.find(c => c.id === candidateId);
+            const candidate = candidates.find(c => c.id == candidateId); // Use loose comparison
             if (!candidate) return;
 
             const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
@@ -3406,21 +4610,19 @@
                 cells[2].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
                 `;
-            }
-
-            // Interview (index 3) - editable when Interview, L2, L3, but NOT when Working
+            }            // Interview (index 3) - editable when Interview, L2, L3, but NOT when Working
             if (['Interview', 'L2', 'L3'].includes(candidate.status)) {
-                cells[3].innerHTML = `<input type="datetime-local" class="edit-input date-input" value="${candidate.interview}" data-field="interview" style="width: 100%;">`;
+                cells[3].innerHTML = `<input type="datetime-local" class="edit-input date-input" value="${candidate.interview || ''}" data-field="interview" style="width: 100%;">`;
             } else {
                 // Show N/A for Idle, Training, Scheduling, and Working
                 cells[3].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
                 `;
-            }
-
-            // Company (index 4) - only editable when Working
+            }            // Company (index 4) - only editable when Working
             if (candidate.status === 'Working') {
-                cells[4].innerHTML = `<input type="text" class="edit-input" value="${candidate.company}" data-field="company">`;
+                const companyValue = candidate.company || '';
+                const isRequired = !companyValue.trim();
+                cells[4].innerHTML = `<input type="text" class="edit-input ${isRequired ? 'required-field' : ''}" value="${companyValue}" data-field="company" placeholder="${isRequired ? 'Required: Enter company name' : 'Company name'}" style="border-color: ${isRequired ? '#f59e0b' : ''};">`;
             } else {
                 // Show N/A for all other statuses
                 cells[4].innerHTML = `
@@ -3430,17 +4632,19 @@
 
             // Project (index 5) - only editable when Working
             if (candidate.status === 'Working') {
-                cells[5].innerHTML = `<input type="text" class="edit-input" value="${candidate.project}" data-field="project">`;
+                const projectValue = candidate.project || '';
+                const isRequired = !projectValue.trim();
+                cells[5].innerHTML = `<input type="text" class="edit-input ${isRequired ? 'required-field' : ''}" value="${projectValue}" data-field="project" placeholder="${isRequired ? 'Required: Enter project name' : 'Project name'}" style="border-color: ${isRequired ? '#f59e0b' : ''};">`;
             } else {
                 // Show N/A for all other statuses
                 cells[5].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
                 `;
-            }
-
-            // Date (index 6) - only editable when Working
+            }            // Date (index 6) - only editable when Working
             if (candidate.status === 'Working') {
-                cells[6].innerHTML = `<input type="date" class="edit-input date-input" value="${candidate.date}" data-field="date" style="width: 100%;">`;
+                const dateValue = candidate.date || '';
+                const isRequired = !dateValue.trim();
+                cells[6].innerHTML = `<input type="date" class="edit-input date-input ${isRequired ? 'required-field' : ''}" value="${dateValue}" data-field="date" placeholder="${isRequired ? 'Required: Select start date' : 'Start date'}" style="width: 100%; border-color: ${isRequired ? '#f59e0b' : ''};" title="${isRequired ? 'Start date is required for Working status' : 'Start date'}">`;
             } else {
                 // Show N/A for all other statuses
                 cells[6].innerHTML = `
@@ -3513,14 +4717,12 @@
                 firstInput.focus();
                 firstInput.select();
             }
-        }
-
-        function saveRowEdit(candidateId) {
-            const candidate = candidates.find(c => c.id === candidateId);
+        }        function saveRowEdit(candidateId) {
+            const candidate = candidates.find(c => c.id == candidateId); // Use loose comparison
             if (!candidate) return;
 
             const row = document.querySelector(`tr[data-candidate-id="${candidateId}"]`);
-            if (!row) return;            // Collect all the edited values
+            if (!row) return;// Collect all the edited values
             const inputs = row.querySelectorAll('.edit-input');
             const newData = {};            inputs.forEach(input => {
                 const field = input.dataset.field;
@@ -3568,20 +4770,28 @@
                     break;
                 case 'Training':
                     // No additional required fields for Training status
-                    break;
-                case 'Working':
-                    // Only validate company when Working (since it's editable)
-                    if (!newData.company) {
-                        showToast('Please fill in the company name', 'error');
-                        return;
+                    break;                case 'Working':
+                    // For Working status, validate required fields but allow partial saves with warnings
+                    const finalCompany = newData.company || candidate.company || '';
+                    const finalProject = newData.project || candidate.project || '';
+                    const finalDate = newData.date || candidate.date || '';
+                    
+                    let missingFields = [];
+                    if (!finalCompany.trim()) missingFields.push('Company');
+                    if (!finalProject.trim()) missingFields.push('Project');
+                    if (!finalDate.trim()) missingFields.push('Start Date');
+                    
+                    if (missingFields.length > 0) {
+                        showToast(`Working status saved. Please fill in the following required fields: ${missingFields.join(', ')}`, 'warning');
+                        // Don't return - allow the save to continue
+                    } else {
+                        showToast('Working status saved with all required details completed!', 'success');
                     }
                     break;
                 case 'Idle':
                     // No additional required fields for Idle status
                     break;
-            }
-
-            // Update candidate data
+            }            // Update candidate data
             Object.assign(candidate, newData);            // Auto-update remarks based on status if status changed
             if (newData.status) {
                 switch(newData.status) {
@@ -3590,6 +4800,12 @@
                         break;
                     case 'Scheduling':
                         candidate.remarks = 'Scheduling Interview';
+                        break;
+                    case 'L2':
+                        candidate.remarks = 'L2 Interview Scheduled';
+                        break;
+                    case 'L3':
+                        candidate.remarks = 'L3 Interview Scheduled';
                         break;
                     case 'Training':
                         candidate.remarks = 'Pending Schedule';
@@ -3600,16 +4816,26 @@
                     case 'Idle':
                         candidate.remarks = 'Currently Idle';
                         break;
+                    default:
+                        // For any new status, use the helper function
+                        candidate.remarks = getRemarksByStatus(newData.status);
+                        break;
                 }
             }
 
-            // Reset editing state
-            currentEditingRow = null;
-            
-            // Re-render the table
-            renderTable();
-            updateDashboard();
-            showToast('Candidate updated successfully', 'success');
+            // Save to API
+            updateCandidateInAPI(candidate).then(() => {
+                // Reset editing state
+                currentEditingRow = null;
+                
+                // Re-render the table
+                renderTable();
+                updateDashboardIfExists();
+                showToast('Candidate updated successfully', 'success');
+            }).catch(error => {
+                console.error('Error updating candidate:', error);
+                showToast('Error updating candidate: ' + error.message, 'error');
+            });
         }
 
         function cancelRowEdit() {
@@ -3620,42 +4846,90 @@
         }
 
         // Delete candidate
-        function deleteCandidate(candidateId) {                if (confirm('Are you sure you want to delete this candidate?')) {
-                    candidates = candidates.filter(c => c.id !== candidateId);
-                    renderTable();
-                    updateDashboard();
-                    showToast('Candidate deleted successfully', 'success');
-                }
+        function deleteCandidate(candidateId) {
+            // Check if deletion is allowed in shared mode
+            if (window.editableCandidateId && window.editableCandidateId != candidateId) {
+                alert('You can only delete your own candidate information in this shared view.');
+                return;
+            }
+
+            const candidate = candidates.find(c => c.id == candidateId);
+            if (!candidate) {
+                showToast('Candidate not found', 'error');
+                return;
             }
             
-            // Generate a permanent unique link for a candidate
+            // Show custom delete confirmation modal
+            showDeleteConfirmation(candidateId, candidate.name);
+        }
+
+        // Show delete confirmation modal
+        function showDeleteConfirmation(candidateId, candidateName) {
+            document.getElementById('deleteCandidateName').textContent = candidateName;
+            document.getElementById('deleteModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Set up the confirm button click handler
+            document.getElementById('confirmDeleteBtn').onclick = () => confirmDelete(candidateId);
+        }
+
+        // Close delete confirmation modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Clean up the click handler
+            document.getElementById('confirmDeleteBtn').onclick = null;
+        }
+
+        // Actually delete the candidate
+        async function confirmDelete(candidateId) {
+            try {
+                closeDeleteModal();
+                showToast('Deleting candidate...', 'info');
+                
+                // Delete from API first
+                await deleteCandidateFromAPI(candidateId);
+                
+                // Remove from local array (use loose comparison for ID)
+                candidates = candidates.filter(c => c.id != candidateId);
+                
+                renderTable();
+                updateDashboardIfExists();
+                showToast('Candidate deleted successfully', 'success');
+            } catch (error) {
+                console.error('Error deleting candidate:', error);
+                showToast('Error deleting candidate: ' + error.message, 'error');
+            }
+        }
+              // Generate a short permanent unique link for a candidate
         function generatePermanentLink(candidateId, email) {
-            const timestamp = Date.now();
-            const random = Math.random().toString(36).substr(2, 9);
-            const uniqueString = `${candidateId}-${email}-${timestamp}-${random}`;
-            const token = btoa(uniqueString).replace(/[^a-zA-Z0-9]/g, '').substr(0, 32);
+            // Create a much shorter, cleaner link
+            const shortId = candidateId.toString().substr(-6); // Last 6 digits of ID
+            const emailHash = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substr(0, 4); // First 4 chars of email hash
+            const timestamp = Date.now().toString(36); // Base36 timestamp for shorter string
+            
+            // Create a short token combining these elements
+            const shortToken = `${shortId}${emailHash}${timestamp}`.substr(0, 12);
             
             const baseUrl = window.location.origin + window.location.pathname;
-            const uniqueId = `${candidateId}_${timestamp}_${random}`;
-            const permanentLink = `${baseUrl}?candidate=${uniqueId}&token=${token}&access=${btoa(email).replace(/[^a-zA-Z0-9]/g, '')}`;
-            
-            return permanentLink;        }
+            const shortLink = `${baseUrl}?c=${candidateId}&t=${shortToken}`;
+              return shortLink;        }
 
         // Share candidate link for individual access
         function shareCandidateLink(candidateId) {
-            const candidate = candidates.find(c => c.id === candidateId);
-            if (!candidate) return;
-            
-            // Use the stored permanent link, or generate one if it doesn't exist (for existing data)
-            let shareableLink = candidate.uniqueLink;
+            const targetCandidate = candidates.find(c => c.id == candidateId); // Use loose comparison
+            if (!targetCandidate) return;
+              // Use the stored permanent link, or generate one if it doesn't exist (for existing data)
+            let shareableLink = targetCandidate.uniqueLink;
             if (!shareableLink) {
-                shareableLink = generatePermanentLink(candidateId, candidate.email);
-                candidate.uniqueLink = shareableLink; // Store it for future use
+                shareableLink = generatePermanentLink(candidateId, targetCandidate.email);
+                targetCandidate.uniqueLink = shareableLink; // Store it for future use
             }
             
             // Copy to clipboard
             navigator.clipboard.writeText(shareableLink).then(() => {
-                showToast(`Permanent link copied for ${candidate.name}!`, 'success');
+                showToast(`Permanent link copied for ${targetCandidate.name}!`, 'success');
             }).catch(() => {
                 // Fallback for older browsers
                 const textArea = document.createElement('textarea');
@@ -3664,7 +4938,7 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showToast(`Permanent link copied for ${candidate.name}!`, 'success');
+                showToast(`Permanent link copied for ${targetCandidate.name}!`, 'success');
             });
         }
 
@@ -3711,11 +4985,19 @@
             }
             
             showToast(`File selected: ${file.name} (${formatFileSize(file.size)})`, 'success');
-        }
-        
-        function handleStatusChangeInEdit(candidateId, newStatus) {
-            const candidate = candidates.find(c => c.id === candidateId);
+        }          function handleStatusChangeInEdit(candidateId, newStatus) {
+            const candidate = candidates.find(c => c.id == candidateId); // Use loose comparison
             if (!candidate) return;
+
+            // Allow changing to Working status and show helpful message about required fields
+            if (newStatus === 'Working') {
+                const currentCompany = candidate.company || '';
+                const currentProject = candidate.project || '';
+                
+                if (!currentCompany.trim() || !currentProject.trim()) {
+                    showToast('Status changed to Working. Please fill in Company and Project fields below to complete the details.', 'info');
+                }
+            }
 
             // Temporarily update candidate status for field display logic
             const originalStatus = candidate.status;
@@ -3779,19 +5061,18 @@
                 cells[2].innerHTML = `                    <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
                 `;
             }
-            
-            // Interview (index 3) - editable when Interview, L2, L3, but NOT when Working
+              // Interview (index 3) - editable when Interview, L2, L3, but NOT when Working
             if (['Interview', 'L2', 'L3'].includes(newStatus)) {
-                cells[3].innerHTML = `<input type="datetime-local" class="edit-input date-input" value="${candidate.interview}" data-field="interview" style="width: 100%;">`;
+                cells[3].innerHTML = `<input type="datetime-local" class="edit-input date-input" value="${candidate.interview || ''}" data-field="interview" style="width: 100%;">`;
             } else {
                 cells[3].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
                 `;
-            }
-
-            // Company (index 4) - only editable when Working
+            }            // Company (index 4) - only editable when Working
             if (newStatus === 'Working') {
-                cells[4].innerHTML = `<input type="text" class="edit-input" value="${candidate.company}" data-field="company">`;
+                const companyValue = candidate.company || '';
+                const isRequired = !companyValue.trim();
+                cells[4].innerHTML = `<input type="text" class="edit-input ${isRequired ? 'required-field' : ''}" value="${companyValue}" data-field="company" placeholder="${isRequired ? 'Required: Enter company name' : 'Company name'}" style="border-color: ${isRequired ? '#f59e0b' : ''};">`;
             } else {
                 cells[4].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
@@ -3800,7 +5081,9 @@
 
             // Project (index 5) - only editable when Working
             if (newStatus === 'Working') {
-                cells[5].innerHTML = `<input type="text" class="edit-input" value="${candidate.project}" data-field="project">`;
+                const projectValue = candidate.project || '';
+                const isRequired = !projectValue.trim();
+                cells[5].innerHTML = `<input type="text" class="edit-input ${isRequired ? 'required-field' : ''}" value="${projectValue}" data-field="project" placeholder="${isRequired ? 'Required: Enter project name' : 'Project name'}" style="border-color: ${isRequired ? '#f59e0b' : ''};">`;
             } else {
                 cells[5].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
@@ -3809,7 +5092,9 @@
 
             // Date (index 6) - only editable when Working
             if (newStatus === 'Working') {
-                cells[6].innerHTML = `<input type="date" class="edit-input date-input" value="${candidate.date}" data-field="date" style="width: 100%;">`;            } else {
+                const dateValue = candidate.date || '';
+                const isRequired = !dateValue.trim();
+                cells[6].innerHTML = `<input type="date" class="edit-input date-input ${isRequired ? 'required-field' : ''}" value="${dateValue}" data-field="date" placeholder="${isRequired ? 'Required: Select start date' : 'Start date'}" style="width: 100%; border-color: ${isRequired ? '#f59e0b' : ''};" title="${isRequired ? 'Start date is required for Working status' : 'Start date'}">`;}else {
                 cells[6].innerHTML = `
                     <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; font-style: italic; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px;">N/A</span>
                 `;
@@ -3846,22 +5131,23 @@
                         }
                     </div>
                 `;
-            }
-
-            // Remarks (index 8) - always read-only, auto-updated
+            }            // Remarks (index 8) - always read-only, auto-updated
             cells[8].innerHTML = `
                 <span style="color: white; font-size: 0.8rem;">${newRemarks}</span>
             `;
             
-            // Restore original status (this is just for display, actual save will update it)
+            // Update the candidate object with new remarks immediately (for display consistency)
+            candidate.remarks = newRemarks;
+            
+            // Restore original status for now (actual save will update it properly)
             candidate.status = originalStatus;
         }
 
         // Document upload functionality (now integrated with row editing)
         function uploadDocument(candidateId) {
             currentUploadCandidateId = candidateId;
-            const candidate = candidates.find(c => c.id === candidateId);
-            document.querySelector('#uploadModal .modal-title').textContent = `Upload Document for ${candidate.name}`;
+            const uploadCandidate = candidates.find(c => c.id == candidateId); // Use loose comparison
+            document.querySelector('#uploadModal .modal-title').textContent = `Upload Document for ${uploadCandidate.name}`;
             document.getElementById('uploadModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
@@ -3924,7 +5210,7 @@
                 return;
             }
 
-            const candidate = candidates.find(c => c.id === currentUploadCandidateId);
+            const candidate = candidates.find(c => c.id == currentUploadCandidateId); // Use loose comparison
             if (!candidate) {
                 showToast('Candidate not found', 'error');
                 return;
@@ -3950,22 +5236,27 @@
         }
 
         // Update dashboard statistics
+        // Smart dashboard update - only updates if dashboard exists
+        function updateDashboardIfExists() {
+            if (document.getElementById('statsGrid')) {
+                updateDashboardIfExists();
+            }
+        }
+
         function updateDashboard() {
             const stats = {
-                total: candidates.length,
-                interview: candidates.filter(c => c.status === 'Interview').length,
+                total: candidates.length,                interview: candidates.filter(c => c.status === 'Interview').length,
                 scheduling: candidates.filter(c => c.status === 'Scheduling').length,
                 training: candidates.filter(c => c.status === 'Training').length,
                 working: candidates.filter(c => c.status === 'Working').length,
                 idle: candidates.filter(c => c.status === 'Idle').length,
-                blockers: candidates.filter(c => c.blockers.length > 0).length
+                blockers: candidates.filter(c => c.blockers && Array.isArray(c.blockers) && c.blockers.length > 0).length
             };
 
             const statsGrid = document.getElementById('statsGrid');
-            
-            // Safety check to ensure the stats grid element exists
+              // Safety check to ensure the stats grid element exists
             if (!statsGrid) {
-                console.warn('Stats grid element not found, skipping dashboard update');
+                console.log('Dashboard not present on this page, skipping stats update');
                 return;
             }
             
@@ -3996,11 +5287,16 @@
                 <div class="stat-card">
                     <div class="stat-number">${stats.blockers}</div>
                     <div class="stat-label">With Blockers</div>
-                </div>            `;
-        }
+                </div>            `;        }
         
         // Export data functionality - Excel format
         function exportData() {
+            // Prevent data export in shared mode
+            if (window.editableCandidateId) {
+                alert('Data export is not allowed in shared view mode.');
+                return;
+            }
+
             // Prepare data for Excel export
             const exportData = candidates.map(candidate => {
                 return {
@@ -4039,17 +5335,17 @@
                 {wch: 15}  // Phone
             ];
             ws['!cols'] = colWidths;
-
+            
             // Generate filename with current date
             const now = new Date();
             const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-            const filename = `Protos_Nexus_Candidates_${dateStr}.xlsx`;
-
-            // Download the Excel file
+            const filename = `ProtosNexus_${dateStr}.xlsx`;
+              // Download the Excel file
             XLSX.writeFile(wb, filename);
-              showToast(`Excel file exported successfully: ${filename}`, 'success');
+            
+            showToast(`Excel file exported successfully: ${filename}`, 'success');
         }
-        
+
         // History tracking functionality
         function logChange(action, candidateName, details) {
             const timestamp = new Date().toISOString();
@@ -4096,9 +5392,13 @@
         function generateHistoryPageHTML() {
             const history = JSON.parse(localStorage.getItem('candidateHistory') || '[]');
             
-            return 
+            return `
+                <html>
+                <head><title>Candidate History</title></head>
+                <body><h1>Candidate History</h1><ul>
+                ${history.map(entry => `<li>${entry.timestamp}: ${entry.action} - ${entry.candidate} - ${entry.details}</li>`).join('')}                </ul></body></html>
+            `;
         }
-    
     </script>
 
     <script>
@@ -4107,6 +5407,8 @@
             if (e.key === 'Escape') {
                 if (currentEditingRow) {
                     cancelRowEdit();
+                } else if (document.getElementById('deleteModal').style.display === 'block') {
+                    closeDeleteModal();
                 } else {
                     closeModal();
                 }
